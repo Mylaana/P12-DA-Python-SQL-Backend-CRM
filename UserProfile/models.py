@@ -46,8 +46,14 @@ class UserProfileManager(BaseUserManager):
 
         return user
 
+class Team(models.Model):
+    """Database team model"""
+
+    name = models.CharField(max_length=50, unique=True)
+
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     """Database user model"""
+    team = models.ForeignKey(Team, null=True, on_delete=models.SET_NULL)
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=255, unique=True)
     first_name = models.CharField(max_length=100)
