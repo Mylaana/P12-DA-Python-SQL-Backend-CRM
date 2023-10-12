@@ -51,6 +51,9 @@ class Team(models.Model):
 
     name = models.CharField(max_length=50, unique=True)
 
+    def __str__(self):
+        return self.name
+
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     """Database user model"""
     team = models.ForeignKey(Team, null=True, on_delete=models.SET_NULL)
