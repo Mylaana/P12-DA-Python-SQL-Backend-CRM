@@ -9,7 +9,6 @@ class Client(models.Model):
     name = models.CharField(max_length=100, unique=True)
     siren = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=255)
-    siren = models.CharField(max_length=50, unique=True)
     phone = models.CharField(max_length=20)
     client_contact_name = models.CharField(max_length=100)
     date_creation = models.DateTimeField(auto_now_add=True)
