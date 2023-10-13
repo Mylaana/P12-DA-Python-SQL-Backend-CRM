@@ -1,3 +1,23 @@
 from django.db import models
+from UserProfile import UserProfile
 
-# Create your models here.
+
+
+class Client(models.Model):
+    """Database user model"""
+    ee_contact = models.ForeignKey(UserProfile.Userprofile, null=True, on_delete=models.SET_NULL)
+    name = models.CharField(max_length=100, unique=True)
+    siren = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(max_length=255)
+    siren = models.CharField(max_length=50, unique=True)
+    phone = models.CharField(max_length=20)
+    client_contact_name = models.CharField(max_length=100)
+    date_creation = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self) -> str:
+        """returns Client contact info"""
+        return (
+            f"username: {self.name}, email: {self.email},"
+            f" phone: {self.phone}, client contact name: {self.client_contact_name}"
+        )
