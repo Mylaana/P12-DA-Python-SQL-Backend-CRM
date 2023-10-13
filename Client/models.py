@@ -1,11 +1,11 @@
 from django.db import models
-from UserProfile import UserProfile
+from UserProfile.models import UserProfile
 
 
 
 class Client(models.Model):
     """Database user model"""
-    ee_contact = models.ForeignKey(UserProfile.Userprofile, null=True, on_delete=models.SET_NULL)
+    ee_contact = models.ForeignKey(UserProfile, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=100, unique=True)
     siren = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=255)
