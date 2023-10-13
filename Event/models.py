@@ -11,7 +11,7 @@ class Event(models.Model):
     date_start = models.DateTimeField()
     date_end = models.DateTimeField()
     location = models.CharField(max_length=100)
-    attendees = models.IntegerField(max_length=10)
+    attendees = models.IntegerField()
     notes = models.TextField(max_length=2000)
 
     def __str__(self) -> str:

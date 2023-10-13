@@ -9,8 +9,8 @@ class Contract(models.Model):
     ee_contact = models.ForeignKey(UserProfile, null=True, on_delete=models.SET_NULL)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     information = models.CharField(max_length=100, unique=True)
-    value_total_price = models.FloatField(max_length=12)
-    value_rest_to_pay = models.FloatField(max_length=12)
+    value_total_price = models.FloatField()
+    value_rest_to_pay = models.FloatField()
     date_creation = models.DateTimeField(auto_now_add=True)
     status_is_active = models.BooleanField(default=True)
 
