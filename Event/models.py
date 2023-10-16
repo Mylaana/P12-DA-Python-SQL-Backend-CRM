@@ -5,7 +5,7 @@ from Contract.models import Contract
 
 class Event(models.Model):
     """Database Event model"""
-    ee_contact = models.ForeignKey(Userprofile, null=True, on_delete=models.SET_NULL)
+    ee_contact = models.ForeignKey(UserProfile, null=True, on_delete=models.SET_NULL)
     contract = models.OneToOneField(Contract, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     date_start = models.DateTimeField()
