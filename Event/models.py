@@ -15,5 +15,5 @@ class Event(models.Model):
     notes = models.TextField(max_length=2000)
 
     def __str__(self) -> str:
-        """returns user contact info"""
+        """returns event info"""
         return f"event: {self.name}, date_start: {self.date_start}, attendees: {self.attendees}"
