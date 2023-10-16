@@ -4,7 +4,7 @@ from UserProfile.models import UserProfile
 
 
 class Client(models.Model):
-    """Database user model"""
+    """Database client model"""
     ee_contact = models.ForeignKey(Userprofile, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=100, unique=True)
     siren = models.CharField(max_length=50, unique=True)
@@ -15,7 +15,7 @@ class Client(models.Model):
 
 
     def __str__(self) -> str:
-        """returns Client contact info"""
+        """returns Client info"""
         return (
             f"username: {self.name}, email: {self.email},"
             f" phone: {self.phone}, client contact name: {self.client_contact_name}"
