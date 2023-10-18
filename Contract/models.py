@@ -3,7 +3,6 @@ from UserProfile.models import UserProfile
 from Client.models import Client
 
 
-
 class Contract(models.Model):
     """Database contract model"""
     ee_contact = models.ForeignKey(UserProfile, null=True, on_delete=models.SET_NULL)

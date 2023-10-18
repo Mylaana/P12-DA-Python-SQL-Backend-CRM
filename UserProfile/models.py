@@ -52,7 +52,7 @@ class Team(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     """Database user model"""
@@ -62,8 +62,6 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
-
-    #add Foreign key to team
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
