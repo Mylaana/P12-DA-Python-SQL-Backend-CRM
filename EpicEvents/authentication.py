@@ -1,7 +1,6 @@
-from django.core.management.base import BaseCommand
 from getpass import getpass
-import requests
 import json
+import requests
 from EpicEvents.settings import BASE_DIR
 
 
@@ -37,13 +36,13 @@ def write_token(auth_data):
     write_data = auth_data
     write_data['password'] = ''
 
-    with open(str(BASE_DIR) + "/" + TOKEN_FILENAME, 'w') as json_file:
+    with open(str(BASE_DIR) + "/" + TOKEN_FILENAME, 'w', encoding='utf-8') as json_file:
         json.dump(auth_data, json_file, indent=4)
 
-def load_token() -> dict:
+def read_token() -> dict:
     """loads token from credential json file"""
 
-    with open(TOKEN_FILENAME, 'r') as json_file:
+    with open(TOKEN_FILENAME, 'r', encoding='utf-8') as json_file:
         loaded_data = json.load(json_file)
 
     return loaded_data
