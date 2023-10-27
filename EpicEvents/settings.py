@@ -48,7 +48,9 @@ INSTALLED_APPS = [
     'UserProfile',
     'Client',
     'Contract',
-    'Event'
+    'Event',
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
