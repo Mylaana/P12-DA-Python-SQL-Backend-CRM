@@ -8,12 +8,10 @@ AUTH_URL = "http://localhost:8000/token-auth/"
 TOKEN_FILENAME = "credentials.json"
 
 class Command(BaseCommand):
-
+    """handles 'login' command"""
     def handle(self, *args, **options):
         """handles 'login' command"""
 
-        #check if token exists
-        #check_if_token()
         auth_data = self.request_get_token()
         if auth_data['token'] is not None:
             print(f"Vous êtes authentifié, bienvenue {auth_data['username']}")
@@ -45,14 +43,14 @@ class Command(BaseCommand):
     def write_token(self, auth_data):
         """writes token in credential json file"""
 
-        #removes password from data to be written
+        # removes password from data to be written
         write_data = auth_data
         write_data['password'] = ''
 
         with open(str(BASE_DIR) + "/" + TOKEN_FILENAME, 'w') as json_file:
             json.dump(auth_data, json_file, indent=4)
 
-    def load_token(self):
+    def load_token(self) -> dict:
         """loads token from credential json file"""
 
         with open(TOKEN_FILENAME, 'r') as json_file:
