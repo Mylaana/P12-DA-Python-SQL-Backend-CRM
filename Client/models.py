@@ -18,6 +18,6 @@ class Client(models.Model):
     def __str__(self) -> str:
         """returns Client info"""
         return (
-            f"username: {self.name}, email: {self.email},"
+            f"Client name: {self.name}, email: {self.email},"
             f" phone: {self.phone}, client contact name: {self.client_contact_name}"
         )
