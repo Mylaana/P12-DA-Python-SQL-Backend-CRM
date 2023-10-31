@@ -28,9 +28,22 @@ def request_commands(view_url, operation, request_data:dict=None):
     if operation == "read":
         response = requests.get(url=request_url, json=request_data, headers=headers, timeout=5000)
         message = ""
+
     elif operation == "create":
         response = requests.post(url=request_url, json=request_data, headers=headers, timeout=5000)
         message = "objet créé avec succes."
+
+    elif operation == "delete":
+        response = requests.delete(url=request_url, json=request_data, headers=headers, timeout=5000)
+        message = "objet supprimé avec succes."
+
+    elif operation == "put":
+        response = requests.patch(url=request_url, json=request_data, headers=headers, timeout=5000)
+        message = "objet modifié avec succes."
+
+    else:
+        print("operation non valide")
+        return
 
     print(message)
     if response.status_code != 200:
