@@ -25,7 +25,7 @@ def request_commands(view_url, operation, request_data:dict=None):
     request_url = f"{BASE_URL}{view_url}/"
     headers={"Content-Type": "application/json",}
 
-    if operation == "read":
+    if operation == "get":
         response = requests.get(url=request_url, json=request_data, headers=headers, timeout=5000)
         message = ""
 
@@ -49,6 +49,5 @@ def request_commands(view_url, operation, request_data:dict=None):
     if response.status_code != 200:
         print(response.text)
 
-
-    if operation == "read":
+    if operation == "get":
         return response.json()

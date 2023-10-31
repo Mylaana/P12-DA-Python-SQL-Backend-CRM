@@ -38,7 +38,7 @@ class Command(BaseCommand):
 
     def client_list(self):
         """handles 'listing clients'"""
-        response = request_commands(view_url='client', operation="read")
+        response = request_commands(view_url='client', operation="get")
         if response is None:
             print("Aucun client trouvé dans la base de donnée")
             return
@@ -50,7 +50,23 @@ class Command(BaseCommand):
 
     def client_read(self):
         """handles reading one client"""
-        print("read")
+        client_name = input("Nom du client: ")
+        response = request_commands(view_url='client', operation="get")
+
+        for line in response:
+            if client_name == line['name']:
+                ee_contact_id = line['ee_contact']
+                ee_contact_name = UserProfile.objects.filter(id=ee_contact_id).first().username
+                print(f"Epic Events - Contact: {ee_contact_name}")
+                print(f"Client - Nom: {line['name']}")
+                print(f"Client - Numero Siren: {line['siren']}")
+                print(f"Client - Nom du contact: {line['client_contact_name']}")
+                print(f"Client - Email: {line['email']}")
+                print(f"Client - Téléphone: {line['phone']}")
+                print(f"Client - Information: {line['information']}")
+                return
+
+        print("Impossible de trouver ce client")
 
     def client_create(self):
         """creates new client"""
