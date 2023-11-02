@@ -3,3 +3,4 @@ __pycache__
 UML.mdj
 db_config.*
 credentials.json
+*coverage
