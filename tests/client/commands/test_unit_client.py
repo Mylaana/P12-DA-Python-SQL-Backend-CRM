@@ -1,6 +1,7 @@
 from Client.management.commands import client
 import pytest
 from unittest.mock import patch, Mock
+
 """
 @pytest.mark.django_db
 def test_should_return_user_id():
@@ -11,7 +12,6 @@ def test_should_return_user_id():
 
     assert isinstance(user_id, int)
 """
-
 
 TEST_CLIENT_LIST = [{'id': 0, 'name': 'test_client', 'siren': 'siren000',
                'email': 'email@client.com', 'phone': '0000',
@@ -56,3 +56,38 @@ def test_client_read_should_return_info():
 
     assert isinstance(returned_value, list)
     assert expected_result in returned_value[0]
+
+
+@pytest.mark.django_db
+@patch('Client.management.commands.client.request_commands', Mock(return_value=None))
+def test_client_delete_should_return_None():
+    command = client.Command()
+    returned_value = command.client_delete('test_client')
+
+    assert returned_value is None
+
+@pytest.mark.django_db
+@patch('Client.management.commands.client.request_commands', Mock(return_value='delete'))
+def test_client_delete_should_return_confirmation():
+    command = client.Command()
+    returned_value = command.client_delete('test_client')
+    expected_result = 'delete'
+
+    assert expected_result == returned_value
+
+@pytest.mark.django_db
+@patch('Client.management.commands.client.request_commands', Mock(return_value=None))
+def test_client_update_should_return_None():
+    command = client.Command()
+    returned_value = command.client_delete('test_client')
+
+    assert returned_value is None
+
+@pytest.mark.django_db
+@patch('Client.management.commands.client.request_commands', Mock(return_value='update'))
+def test_client_update_should_return_confirmation():
+    command = client.Command()
+    returned_value = command.client_delete('test_client')
+    expected_result = 'update'
+
+    assert expected_result == returned_value

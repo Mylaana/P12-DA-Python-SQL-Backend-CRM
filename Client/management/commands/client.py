@@ -132,14 +132,16 @@ class Command(BaseCommand):
         }
 
         return request_commands(view_url='client', operation="create", request_data=data)
-        
-    def client_delete(self):
+
+    def client_delete(self, client_name):
         """handles deleting one client"""
-        print("delete")
+        data = {}
+        return request_commands(view_url='client', operation="delete", request_data=data)
 
     def client_update(self):
         """handles updating one client"""
-        print("update")
+        data = {}
+        return request_commands(view_url='client', operation="update", request_data=data)
 
     def get_ee_contact_id(self, contact_name:str):
         """gets username returns user id"""
@@ -149,4 +151,14 @@ class Command(BaseCommand):
     def get_ee_contact_name(self, contact_id:int):
         """gets username returns user id"""
         result = UserProfile.objects.filter(id=contact_id).first().id
+        return result
+
+    def get_ee_client_id(self, client_name:str):
+        """gets username returns user id"""
+        result = Client.objects.filter(name=client_name).first().id
+        return result
+
+    def get_ee_client_name(self, client_id:int):
+        """gets username returns user id"""
+        result = Client.objects.filter(id=client_id).first().id
         return result
