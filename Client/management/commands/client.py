@@ -2,7 +2,7 @@ from datetime import datetime
 from django.core.management.base import BaseCommand
 from Client.models import Client
 from UserProfile.models import UserProfile
-from EpicEvents.utils import input_validation, request_commands
+from EpicEvents.utils import input_validation, request_commands, print_command_result
 
 
 class Command(BaseCommand):
@@ -21,13 +21,21 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """handles 'clients related commands'"""
         if options['list']:
-            self.client_list()
+            result = self.client_list()
+            if result is None:
+                print_command_result("Aucun client trouvé dans la base de donnée")
+            else:
+                print_command_result("liste des clients :", result)
 
         elif options['read']:
-            self.client_read()
+            result = self.client_read(input("Nom du client: "))
+            if result is None:
+                print_command_result("Impossible de trouver ce client")
+            else:
+                print_command_result(printable=result)
 
         elif options['create']:
-            self.client_create()
+            result = self.client_create()
 
         elif options['delete']:
             self.client_delete()
@@ -37,39 +45,48 @@ class Command(BaseCommand):
 
 
     def client_list(self):
-        """handles 'listing clients'"""
+        """
+        handles 'listing clients
+        returns a list of client or none
+        '"""
         response = request_commands(view_url='client', operation="get")
         if response is None:
-            print("Aucun client trouvé dans la base de donnée")
-            return
+            return None
 
-        print("liste des clients :")
+        client_list = []
+
         for client_data in response:
-            print(client_data['name'])
+            client_list.append(client_data['name'])
 
+        return client_list
 
-    def client_read(self):
-        """handles reading one client"""
-        client_name = input("Nom du client: ")
+    def client_read(self, client_name):
+        """
+        handles reading one client
+        returns client info if found or none
+        """
         response = request_commands(view_url='client', operation="get")
+
+        if response is None:
+            return None
 
         for line in response:
             if client_name == line['name']:
+                client_info = []
                 ee_contact_id = line['ee_contact']
-                ee_contact_name = UserProfile.objects.filter(id=ee_contact_id).first().username
-                print(f"Epic Events - Contact: {ee_contact_name}")
-                print(f"Client - Nom: {line['name']}")
-                print(f"Client - Numero Siren: {line['siren']}")
-                print(f"Client - Nom du contact: {line['client_contact_name']}")
-                print(f"Client - Email: {line['email']}")
-                print(f"Client - Téléphone: {line['phone']}")
-                print(f"Client - Information: {line['information']}")
-                return
+                ee_contact_name = self.get_ee_contact_name(ee_contact_id)
+                client_info.append(f"Client: {line['name']}")
+                client_info.append(f"Epic Events - Contact: {ee_contact_name}")
+                client_info.append(f"Client - Numero Siren: {line['siren']}")
+                client_info.append(f"Client - Nom du contact: {line['client_contact_name']}")
+                client_info.append(f"Client - Email: {line['email']}")
+                client_info.append(f"Client - Téléphone: {line['phone']}")
+                client_info.append(f"Client - Information: {line['information']}")
 
-        print("Impossible de trouver ce client")
+                return client_info
 
     def client_create(self):
-        """creates new client"""
+        """handles creating a new client"""
         # ask contact name and get contact id from it
         ee_contact = self.get_ee_contact_id(input('Epic Events - Nom du contact: '))
         if input_validation(ee_contact):
@@ -114,8 +131,8 @@ class Command(BaseCommand):
             'information': information,
         }
 
-        request_commands(view_url='client', operation="create", request_data=data)
-
+        return request_commands(view_url='client', operation="create", request_data=data)
+        
     def client_delete(self):
         """handles deleting one client"""
         print("delete")
@@ -126,5 +143,10 @@ class Command(BaseCommand):
 
     def get_ee_contact_id(self, contact_name:str):
         """gets username returns user id"""
-        contact_id = UserProfile.objects.filter(username=contact_name).first().id
-        return contact_id
+        result = UserProfile.objects.filter(username=contact_name).first().id
+        return result
+
+    def get_ee_contact_name(self, contact_id:int):
+        """gets username returns user id"""
+        result = UserProfile.objects.filter(id=contact_id).first().id
+        return result
