@@ -6,7 +6,7 @@ from rest_framework import status
 
 BASE_URL = "http://localhost:8000/"
 
-def input_validation(user_input, empty=True):
+def input_validated(user_input, empty=True):
     """
     validates user input
     gets user input as string
@@ -15,12 +15,15 @@ def input_validation(user_input, empty=True):
     if user_input == "" and empty is False:
         print("Ce champs ne peut pas être vide")
         return False
+    return True
 
 
-def request_commands(view_url, operation, request_data:dict=None):
+def request_commands(view_url, operation, request_data:dict=None, id:int=None):
     """roots the command request to the view"""
-
+    message_invalid = "Requete non valide"
     request_url = f"{BASE_URL}{view_url}/"
+    if id is not None:
+        request_url = request_url + f'{id}/'
     headers={"Content-Type": "application/json",}
 
     if operation == "get":
@@ -30,12 +33,16 @@ def request_commands(view_url, operation, request_data:dict=None):
         response = requests.post(url=request_url, json=request_data, headers=headers, timeout=5000)
 
     elif operation == "delete":
-        response = requests.delete(url=request_url, json=request_data, headers=headers, timeout=5000)
+        # force id filter to be specified
+        if id is None:
+            return message_invalid
 
-    elif operation == "put":
+        response = requests.delete(url=request_url, headers=headers, timeout=5000)
+
+    elif operation == "update":
         response = requests.patch(url=request_url, json=request_data, headers=headers, timeout=5000)
     else:
-        return "Invalid Request"
+        return message_invalid
 
     if response.status_code != 200:
         return response.text
