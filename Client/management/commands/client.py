@@ -47,8 +47,6 @@ class Command(BaseCommand):
             else:
                 print_command_result("liste des clients :", result)
 
-            return
-
         elif options['read']:
             client_name = input("Nom du client: ")
             client_id = self.get_ee_client_id(client_name=client_name)
@@ -145,7 +143,7 @@ class Command(BaseCommand):
         handles 'listing clients
         returns a list of client or None
         '"""
-        response = request_commands(view_url='client', operation="get")
+        response = request_commands(view_url='client', operation="read")
         if response is None:
             return None
 
@@ -161,7 +159,7 @@ class Command(BaseCommand):
         handles reading one client
         returns dict if found or none if not found
         """
-        response = request_commands(view_url='client', operation="get", id=client_id)
+        response = request_commands(view_url='client', operation="read", id=client_id)
 
         client_info = []
         ee_contact_id = int(response['ee_contact'])

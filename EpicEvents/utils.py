@@ -26,7 +26,7 @@ def request_commands(view_url, operation, request_data:dict=None, id:int=None):
         request_url = request_url + f'{id}/'
     headers={"Content-Type": "application/json",}
 
-    if operation == "get":
+    if operation == "read":
         response = requests.get(url=request_url, json=request_data, headers=headers, timeout=5000)
 
     elif operation == "create":
@@ -47,7 +47,7 @@ def request_commands(view_url, operation, request_data:dict=None, id:int=None):
     if response.status_code != 200:
         return response.text
 
-    if operation == "get":
+    if operation == "read":
         return response.json()
     else:
         return operation
