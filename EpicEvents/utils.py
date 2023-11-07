@@ -2,6 +2,8 @@
 import requests
 from rest_framework.response import Response
 from rest_framework import status
+from Client.models import Client
+from UserProfile.models import UserProfile
 
 
 BASE_URL = "http://localhost:8000/"
@@ -62,3 +64,31 @@ def print_command_result(title:str="", printable=None):
 
     for line in printable:
         print(line)
+
+
+def get_ee_contact_id(contact_name:str):
+    """gets contact name returns contact id"""
+    result = UserProfile.objects.filter(username=contact_name).first()
+
+    if result is None:
+        return None
+
+    return result.id
+
+def get_ee_contact_name(contact_id:int):
+    """gets user id returns username"""
+    result = UserProfile.objects.filter(id=contact_id).first()
+
+    if result is None:
+        return None
+
+    return result.username
+
+def get_ee_client_id(client_name:str):
+    """gets username returns user id"""
+    result = Client.objects.filter(name=client_name).first()
+
+    if result is None:
+        return None
+
+    return result.id

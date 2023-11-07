@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from Client.models import Client
 from UserProfile.models import UserProfile
 from EpicEvents.utils import input_validated, request_commands, print_command_result
+from EpicEvents.utils import get_ee_client_id, get_ee_contact_id, get_ee_contact_name
 
 
 CLIENT_FIELD_LIST = [
@@ -49,10 +50,10 @@ class Command(BaseCommand):
 
         elif options['read']:
             client_name = input("Nom du client: ")
-            client_id = self.get_ee_client_id(client_name=client_name)
-
+            client_id = get_ee_client_id(client_name=client_name)
             if client_id is None:
                 print_command_result("Impossible de trouver ce client")
+                return
 
             result = self.client_read(client_id=client_id)
 
@@ -72,7 +73,7 @@ class Command(BaseCommand):
         elif options['create']:
             # ask contact name and get contact id from it
             ee_contact_name = input('Epic Events - Nom du contact: ')
-            ee_contact_id = self.get_ee_contact_id(ee_contact_name)
+            ee_contact_id = get_ee_contact_id(ee_contact_name)
 
             if ee_contact_id is None:
                 print("Impossible de trouver cet utilisateur dans la base de données.")
@@ -105,7 +106,13 @@ class Command(BaseCommand):
 
         elif options['delete']:
             client_name = input("Nom du client à supprimer: ")
-            result = self.client_delete(client_name=client_name)
+            client_id = get_ee_client_id(client_name=client_name)
+
+            if client_id is None:
+                print("Impossible de trouver ce client dans la base de données.")
+                return
+
+            result = self.client_delete(client_id=client_id)
             if result is None:
                 print_command_result("Impossible de supprimer ce client")
             else:
@@ -113,10 +120,10 @@ class Command(BaseCommand):
 
         elif options['update']:
             client_name = input("Nom du client à modifier: ")
-            client_id = self.get_ee_client_id(client_name=client_name)
+            client_id = get_ee_client_id(client_name=client_name)
 
             if client_id is None:
-                print_command_result("Impossible de trouver ce client")
+                print("Impossible de trouver ce client dans la base de données.")
                 return
 
             # get client data
@@ -131,7 +138,7 @@ class Command(BaseCommand):
                 if user_input != "":
                     client_data[line] = user_input
 
-            result = self.client_update(client_name=client_name, client_data=client_data)
+            result = self.client_update(client_id=client_id, client_data=client_data)
             if result is None:
                 print_command_result("Impossible de modifier ce client")
             else:
@@ -160,10 +167,9 @@ class Command(BaseCommand):
         returns dict if found or none if not found
         """
         response = request_commands(view_url='client', operation="read", id=client_id)
-
         client_info = []
         ee_contact_id = int(response['ee_contact'])
-        ee_contact_name = self.get_ee_contact_name(ee_contact_id)
+        ee_contact_name = get_ee_contact_name(ee_contact_id)
 
         client_info = {
             'ee_contact_id': ee_contact_id,
@@ -182,53 +188,10 @@ class Command(BaseCommand):
 
         return request_commands(view_url='client', operation="create", request_data=client_data)
 
-    def client_delete(self, client_name):
+    def client_delete(self, client_id):
         """handles deleting one client"""
-        client_id = self.get_ee_client_id(client_name=client_name)
-
-        if client_id is None:
-            return None
-
         return request_commands(view_url='client', operation="delete", id=client_id)
 
-    def client_update(self, client_name, client_data):
+    def client_update(self, client_id, client_data):
         """handles updating one client"""
-        client_id = self.get_ee_client_id(client_name=client_name)
         return request_commands(view_url='client', operation="update", request_data=client_data, id=client_id)
-
-    def get_ee_contact_id(self, contact_name:str):
-        """gets username returns user id"""
-        result = UserProfile.objects.filter(username=contact_name).first()
-
-        if result is None:
-            return None
-
-        return result.id
-
-
-    def get_ee_contact_name(self, contact_id:int):
-        """gets username returns user id"""
-        result = UserProfile.objects.filter(id=contact_id).first()
-
-        if result is None:
-            return None
-
-        return result.username
-
-    def get_ee_client_id(self, client_name:str):
-        """gets username returns user id"""
-        result = Client.objects.filter(name=client_name).first()
-
-        if result is None:
-            return None
-
-        return result.id
-
-    def get_ee_client_name(self, client_id:int):
-        """gets username returns user id"""
-        result = Client.objects.filter(id=client_id).first()
-
-        if result is None:
-            return None
-
-        return result.name
