@@ -27,8 +27,7 @@ def request_commands(view_url, operation, request_data:dict=None, object_id:int=
     request_url = f"{BASE_URL}{view_url}/"
     if object_id is not None:
         request_url = request_url + f'{object_id}/'
-    elif object_name is not None:
-        request_url = request_url + f'{object_name}/'
+
     headers={"Content-Type": "application/json",}
 
     if operation == "read":
@@ -69,9 +68,9 @@ def print_command_result(title:str="", printable=None):
         print(line)
 
 
-def get_ee_contact_id(contact_name:str):
-    """gets contact name returns contact id"""
-    result = UserProfile.objects.filter(username=contact_name).first()
+def get_ee_contact_id(username:str):
+    """gets username returns contact id"""
+    result = UserProfile.objects.filter(username=username).first()
 
     if result is None:
         return None

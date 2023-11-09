@@ -5,19 +5,6 @@ from django.core.management import call_command
 from tests.fixtures import simulate_user_input
 
 
-"""
-@pytest.mark.django_db
-def test_should_return_user_id():
-    command = client.Command()
-
-    username = "admin-oc"
-    user_id = command.get_ee_contact_id(username)
-
-    assert isinstance(user_id, int)
-"""
-
-
-
 TEST_CLIENT_INFO = {
     'id': 0,
     'name': 'test_client',

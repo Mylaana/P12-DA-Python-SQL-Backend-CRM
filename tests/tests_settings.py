@@ -1,5 +1,5 @@
 from EpicEvents.settings import *  # your usual settings
-
+"""
 # Dadabase configuration for tests
 DATABASES = {
     'default': {
@@ -8,3 +8,4 @@ DATABASES = {
         'ATOMIC_REQUESTS': True,
     }
 }
+"""
