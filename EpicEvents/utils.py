@@ -1,14 +1,12 @@
 """Utils module"""
 import requests
-from rest_framework.response import Response
-from rest_framework import status
 from Client.models import Client
 from UserProfile.models import UserProfile
 
 
 BASE_URL = "http://localhost:8000/"
 
-def input_validated(user_input, empty=True):
+def input_validated(user_input, empty=False):
     """
     validates user input
     gets user input as string
@@ -20,12 +18,17 @@ def input_validated(user_input, empty=True):
     return True
 
 
-def request_commands(view_url, operation, request_data:dict=None, id:int=None):
-    """roots the command request to the view"""
+def request_commands(view_url, operation, request_data:dict=None, object_id:int=None, object_name:str=None):
+    """
+    roots the command request to the view
+    object_name should be a string and will be used only if object_id is none.
+    """
     message_invalid = "Requete non valide"
     request_url = f"{BASE_URL}{view_url}/"
-    if id is not None:
-        request_url = request_url + f'{id}/'
+    if object_id is not None:
+        request_url = request_url + f'{object_id}/'
+    elif object_name is not None:
+        request_url = request_url + f'{object_name}/'
     headers={"Content-Type": "application/json",}
 
     if operation == "read":
@@ -36,7 +39,7 @@ def request_commands(view_url, operation, request_data:dict=None, id:int=None):
 
     elif operation == "delete":
         # force id filter to be specified
-        if id is None:
+        if object_id is None:
             return message_invalid
 
         response = requests.delete(url=request_url, headers=headers, timeout=5000)
@@ -85,7 +88,7 @@ def get_ee_contact_name(contact_id:int):
     return result.username
 
 def get_ee_client_id(client_name:str):
-    """gets username returns user id"""
+    """gets client name returns id"""
     result = Client.objects.filter(name=client_name).first()
 
     if result is None:

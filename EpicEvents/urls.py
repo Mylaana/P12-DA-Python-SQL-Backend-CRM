@@ -27,5 +27,5 @@ router.register('client', ClientViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('token-auth/', CustomObtainAuthToken.as_view(), name='token_auth'),
-    path('', include(router.urls))
+    path('', include(router.urls)),
 ]

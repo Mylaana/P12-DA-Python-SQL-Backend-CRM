@@ -166,7 +166,7 @@ class Command(BaseCommand):
         handles reading one client
         returns dict if found or none if not found
         """
-        response = request_commands(view_url='client', operation="read", id=client_id)
+        response = request_commands(view_url='client', operation="read", object_id=client_id)
         client_info = []
         ee_contact_id = int(response['ee_contact'])
         ee_contact_name = get_ee_contact_name(ee_contact_id)
@@ -185,13 +185,12 @@ class Command(BaseCommand):
 
     def client_create(self, client_data):
         """handles creating a new client"""
-
         return request_commands(view_url='client', operation="create", request_data=client_data)
 
     def client_delete(self, client_id):
         """handles deleting one client"""
-        return request_commands(view_url='client', operation="delete", id=client_id)
+        return request_commands(view_url='client', operation="delete", object_id=client_id)
 
     def client_update(self, client_id, client_data):
         """handles updating one client"""
-        return request_commands(view_url='client', operation="update", request_data=client_data, id=client_id)
+        return request_commands(view_url='client', operation="update", request_data=client_data, object_id=client_id)

@@ -166,10 +166,9 @@ def test_handle_create_should_print_error_creating_client(capfd, simulate_user_i
         'info000'
         ])
 
-    call_command('client', '-pouet')
+    call_command('client', '-create')
     out, err = capfd.readouterr()
-    expected_value = "Impdfgsdfgdssdf"
-    print(out)
+    expected_value = "impossible de créer ce client."
     assert expected_value.strip().lower() in out.strip().lower()
 
 @pytest.mark.django_db
@@ -244,7 +243,7 @@ def test_handle_update_should_print_client_not_found(capfd, simulate_user_input)
 @patch('Client.management.commands.client.Command.client_read', Mock(return_value=TEST_CLIENT_INFO))
 @patch('Client.management.commands.client.Command.client_update', Mock(return_value=None))
 @patch('Client.management.commands.client.get_ee_client_id', Mock(return_value=0))
-def test_handle_create_should_print_error_creating_client(capfd, simulate_user_input):
+def test_handle_update_should_print_error_creating_client(capfd, simulate_user_input):
     simulate_user_input(['client_name_not_existing'] + [''] * 7)
 
     call_command('client', '-update')
@@ -257,7 +256,7 @@ def test_handle_create_should_print_error_creating_client(capfd, simulate_user_i
 @patch('Client.management.commands.client.Command.client_read', Mock(return_value=TEST_CLIENT_INFO))
 @patch('Client.management.commands.client.Command.client_update', Mock(return_value='update'))
 @patch('Client.management.commands.client.get_ee_client_id', Mock(return_value=0))
-def test_handle_create_should_print_client_created(capfd, simulate_user_input):
+def test_handle_update_should_print_client_created(capfd, simulate_user_input):
     simulate_user_input(['client_name_not_existing'] + [''] * 7)
 
     call_command('client', '-update')
