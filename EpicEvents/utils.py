@@ -1,7 +1,7 @@
 """Utils module"""
 import requests
 from Client.models import Client
-from UserProfile.models import UserProfile
+from UserProfile.models import UserProfile, Team
 
 
 BASE_URL = "http://localhost:8000/"
@@ -40,7 +40,9 @@ def request_commands(view_url, operation, request_data:dict=None, object_id:int=
         # force id filter to be specified
         if object_id is None:
             return message_invalid
-
+        print(request_data)
+        print(object_id)
+        print(request_url)
         response = requests.delete(url=request_url, headers=headers, timeout=5000)
 
     elif operation == "update":
@@ -94,3 +96,21 @@ def get_ee_client_id(client_name:str):
         return None
 
     return result.id
+
+def get_team_id(name:str):
+    """gets name returns id"""
+    result = Team.objects.filter(name=name).first()
+
+    if result is None:
+        return None
+
+    return result.id
+
+def get_team_name(object_id:str):
+    """gets name returns id"""
+    result = Team.objects.filter(id=object_id).first()
+
+    if result is None:
+        return None
+
+    return result.name

@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 class UserProfileManager(BaseUserManager):
     """Database User Manager model"""
 
-    def create_user(self, username, email, first_name, last_name, phone, password=None):
+    def create_user(self, username, email, first_name, last_name, phone, password=None, team=None):
         """Create user in database"""
 
         if not email:
@@ -26,7 +26,8 @@ class UserProfileManager(BaseUserManager):
                           email=email,
                           first_name=first_name,
                           last_name=last_name,
-                          phone=phone)
+                          phone=phone,
+                          team=team)
 
         user.set_password(password)
         user.save(using=self.db)
