@@ -47,14 +47,21 @@ def test_handle_create_user_should_create():
     # parsed_value = json.loads(returned_value)
 
     assert TEST_USER['username'] in returned_value
+    user_id = get_ee_contact_id(username=TEST_USER['username'])
+    print(user_id)
+    assert user_id is not None
 
 @pytest.mark.django_db
 def test_handle_delete_user_should_delete():
-    time.sleep(1)
     command = user.Command()
+    time.sleep(1)
     user_id = get_ee_contact_id(username=TEST_USER['username'])
     print(TEST_USER['username'])
     print(user_id)
-    returned_value = command.user_delete(user_id=27)
-    print(returned_value)
-    assert returned_value == 'delete'
+    user_id = get_ee_contact_id(username=TEST_USER['username'])
+    assert user_id is not None
+    returned_value = command.user_delete(user_id=user_id)
+
+    # assert returned_value == 'delete'
+    user_id = get_ee_contact_id(username=TEST_USER['username'])
+    assert user_id is None

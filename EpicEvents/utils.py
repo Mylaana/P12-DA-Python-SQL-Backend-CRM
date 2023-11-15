@@ -13,7 +13,7 @@ def input_validated(user_input, empty=False):
     returns boolean
     """
     if user_input == "" and empty is False:
-        print("Ce champs ne peut pas être vide")
+        print("Ce champ ne peut pas être vide")
         return False
     return True
 
@@ -40,9 +40,6 @@ def request_commands(view_url, operation, request_data:dict=None, object_id:int=
         # force id filter to be specified
         if object_id is None:
             return message_invalid
-        print(request_data)
-        print(object_id)
-        print(request_url)
         response = requests.delete(url=request_url, headers=headers, timeout=5000)
 
     elif operation == "update":
