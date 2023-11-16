@@ -7,6 +7,14 @@ import json
 
 BASE_URL = "http://localhost:8000/"
 
+
+ERROR_MESSAGE = {
+    'client_not_existing': 'Impossible de trouver ce client dans la base de données.',
+    'user_not_existing': 'Impossible de trouver cet utilisateur dans la base de données.',
+    'contract_not_existing': 'Impossible de trouver ce contrat dans la base de données.',
+    'event_not_existing': 'Impossible de trouver cet événement dans la base de données.'
+}
+
 def input_validated(user_input, empty=False):
     """
     validates user input

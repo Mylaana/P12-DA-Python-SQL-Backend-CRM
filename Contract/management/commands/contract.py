@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from Contract.models import Contract
 from EpicEvents.utils import input_validated, request_commands, print_command_result
 from EpicEvents.utils import get_object_from_field_name
+from EpicEvents.utils import ERROR_MESSAGE
 from getpass import getpass
 
 
@@ -14,7 +15,6 @@ CONTRACT_FIELD_LIST = [
     'status_is_active',
     'client',
     ]
-
 
 CONTRACT_DESCRIPTION = {
     'ee_contact': "Nom du contact EpicEvents: ",
@@ -56,13 +56,28 @@ class Command(BaseCommand):
                 )
 
             if contract is None:
-                print_command_result("Impossible de trouver cet contrat.")
+                print_command_result(ERROR_MESSAGE['contract_not_existing'])
                 return
 
             # formatting contract for terminal output
             contract_info = []
             for line in CONTRACT_FIELD_LIST:
-                contract_info.append(f"{CONTRACT_DESCRIPTION[line]} {contract[line]}")
+                if line == 'client':
+                    client = get_object_from_field_name(
+                        filter_field_name='id',
+                        filter_field_value=contract['client'],
+                        view_url='client'
+                    )
+                    contract_info.append(f"{CONTRACT_DESCRIPTION[line]} {client['name']}")
+                elif line == 'ee_contact':
+                    user = get_object_from_field_name(
+                        filter_field_name='id',
+                        filter_field_value=contract['ee_contact'],
+                        view_url='user'
+                    )
+                    contract_info.append(f"{CONTRACT_DESCRIPTION[line]} {user['username']}")
+                else:
+                    contract_info.append(f"{CONTRACT_DESCRIPTION[line]} {contract[line]}")
 
             print_command_result(printable=contract_info)
 
@@ -104,51 +119,89 @@ class Command(BaseCommand):
                 print_command_result(f"Contrat '{contract_data['information']}' créé avec succès")
 
         elif options['delete']:
-            contract_name = input("Nom du contrat à supprimer: ")
-            contract_id = get_ee_contract_id(name=contract_name)
+            contract_name = input("Information du contrat à supprimer: ")
+            contract = get_object_from_field_name(
+                filter_field_name='information',
+                filter_field_value=contract_name,
+                view_url='contract'
+                )
 
-            if contract_id is None:
-                print("Impossible de trouver cet contrat dans la base de données.")
+            if contract is None:
+                print(ERROR_MESSAGE['contract_not_existing'])
                 return
 
-            result = self.contract_delete(contract_id=contract_id)
+            result = self.contract_delete(contract_id=contract['id'])
             if result is None:
-                print_command_result("Impossible de supprimer ce user")
+                print_command_result("Impossible de supprimer ce contrat")
             else:
                 print_command_result(f"'{contract_name}' supprimé avec succès.")
 
         elif options['update']:
-            contract_name = input("Nom du contrat à modifier: ")
-            contract_id = get_ee_contract_id(name=contract_name)
+            contract_name = input("Information du contrat à modifier: ")
+            contract_data = get_object_from_field_name(
+                filter_field_name='information',
+                filter_field_value=contract_name,
+                view_url='contract'
+                )
 
-            if contract_id is None:
-                print("Impossible de trouver cet contrat dans la base de données.")
+            if contract_data is None:
+                print(ERROR_MESSAGE['contract_not_existing'])
                 return
 
-            # get user data
-            contract_data = self.contract_read(contract_id)
             contract_description = CONTRACT_DESCRIPTION
             print('Entrer les valeurs à mettre à jour, laisser vide pour garder les existantes:')
-            print(CONTRACT_FIELD_LIST_UNSAFE)
-            print(contract_description)
-            for line in CONTRACT_FIELD_LIST_UNSAFE:
-                if line == 'team':
+
+            for line in CONTRACT_FIELD_LIST:
+                if line == 'client':
+                    client = get_object_from_field_name(
+                        filter_field_name='id',
+                        filter_field_value=contract_data['client'],
+                        view_url='client'
+                        )
                     contract_description[line] = contract_description[line].replace(
-                        ':',f' ({get_team_name(contract_data[line])}):')
+                        ':',f" ({client['name']}):")
+                elif line == 'ee_contact':
+                    user = get_object_from_field_name(
+                        filter_field_name='id',
+                        filter_field_value=contract_data['ee_contact'],
+                        view_url='user'
+                    )
+                    contract_description[line] = contract_description[line].replace(
+                        ':',f" ({user['username']}):")
                 else:
                     contract_description[line] = contract_description[line].replace(
                         ':',f' ({contract_data[line]}):')
 
-                if line == 'password':
-                    contract_input = getpass(contract_description[line])
-                else:
-                    contract_input = input(contract_description[line])
+                contract_input = input(contract_description[line])
 
-                # modify the stored value only if contract entered something
-                if contract_input != "":
-                    contract_data[line] = contract_input
+                # modify the stored value only if user entered something for this line
+                if contract_input != "" and contract_data[line] != contract_input:
+                    # getting client & ee_contact id from user's input
+                    if line == 'client':
+                        client = get_object_from_field_name(
+                            filter_field_name='name',
+                            filter_field_value=contract_input,
+                            view_url='client'
+                            )
+                        if client is None:
+                            print_command_result(ERROR_MESSAGE['client_not_existing'])
+                            return
+                        contract_data[line] = client['id']
+                    elif line == 'ee_contact':
+                        user = get_object_from_field_name(
+                            filter_field_name='username',
+                            filter_field_value=contract_input,
+                            view_url='user'
+                        )
+                        if user is None:
+                            print_command_result(ERROR_MESSAGE['user_not_existing'])
+                            return
+                        contract_data[line] = user['id']
+                    else:
+                        contract_data[line] = contract_input
 
-            result = self.contract_update(contract_id=contract_id, contract_data=contract_data)
+            result = self.contract_update(
+                contract_id=contract_data['id'], contract_data=contract_data)
             if result is None:
                 print_command_result("Impossible de modifier ce contrat")
             else:
