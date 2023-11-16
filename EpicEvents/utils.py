@@ -2,6 +2,7 @@
 import requests
 from Client.models import Client
 from UserProfile.models import UserProfile, Team
+import json
 
 
 BASE_URL = "http://localhost:8000/"
@@ -111,3 +112,47 @@ def get_team_name(object_id:str):
         return None
 
     return result.name
+
+def get_object_from_field_name(view_url, filter_field_name:str, filter_field_value):
+    """
+    gets a veiw and a field_name
+    returns object if found
+    """
+    if filter_field_name == 'id':
+        return get_object_field_from_id(
+            view_url=view_url,
+            object_id=filter_field_value
+            )
+    else:
+        return get_object_from_any_field(
+            view_url=view_url,
+            filter_field_name=filter_field_name,
+            filter_field_value=filter_field_value
+        )
+
+def get_object_from_any_field(view_url, filter_field_name:str, filter_field_value):
+    """
+    gets view, a field_name from an object and it's value for filtering
+    returns the object found
+    """
+    request_result = request_commands(
+        view_url=view_url,
+        operation='read',
+        object_id=None
+        )
+
+    for item in request_result:
+        if item[filter_field_name] == filter_field_value :
+            return item
+
+
+def get_object_field_from_id(view_url, object_id:int):
+    """
+    gets view, object_id
+    returns the object found
+    """
+    return request_commands(
+        view_url=view_url,
+        operation='read',
+        object_id=object_id
+        )

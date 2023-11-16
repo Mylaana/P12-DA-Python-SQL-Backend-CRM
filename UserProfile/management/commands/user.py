@@ -194,7 +194,6 @@ class Command(BaseCommand):
         gets user id (integer)
         returns 'delete' if successful
         """
-        print('userid : ' + str(user_id))
         return request_commands(view_url='user', operation="delete", object_id=user_id)
 
     def user_update(self, user_id:int, user_data:dict):

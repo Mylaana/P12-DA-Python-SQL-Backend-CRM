@@ -21,11 +21,13 @@ from rest_framework.routers import DefaultRouter
 from .authentication import CustomObtainAuthToken
 from Client.views import ClientViewSet
 from UserProfile.views import UserProfileViewSet, TeamViewSet
+from Contract.views import ContractViewSet
 
 router = DefaultRouter()
 router.register('client', ClientViewSet)
 router.register('user', UserProfileViewSet)
 router.register('team', TeamViewSet)
+router.register('contract', ContractViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
