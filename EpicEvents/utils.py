@@ -56,13 +56,16 @@ def request_commands(view_url, operation, request_data:dict=None, object_id:int=
     else:
         return message_invalid
 
+
     if response.status_code != 200:
         return response.text
 
     if operation == "read":
+        if response.json() == []:
+            return None
         return response.json()
-    else:
-        return operation
+
+    return operation
 
 def print_command_result(title:str="", printable=None):
     """gets a title and an iterable to print"""

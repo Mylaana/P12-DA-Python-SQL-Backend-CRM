@@ -22,12 +22,14 @@ from .authentication import CustomObtainAuthToken
 from Client.views import ClientViewSet
 from UserProfile.views import UserProfileViewSet, TeamViewSet
 from Contract.views import ContractViewSet
+from Event.views import EventViewSet
 
 router = DefaultRouter()
 router.register('client', ClientViewSet)
 router.register('user', UserProfileViewSet)
 router.register('team', TeamViewSet)
 router.register('contract', ContractViewSet)
+router.register('event', EventViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
