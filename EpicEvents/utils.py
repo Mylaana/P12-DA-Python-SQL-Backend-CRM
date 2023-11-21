@@ -3,6 +3,7 @@ import requests
 from Client.models import Client
 from UserProfile.models import UserProfile, Team
 import json
+from datetime import datetime
 
 
 BASE_URL = "http://localhost:8000/"
@@ -21,7 +22,7 @@ def input_validated(user_input, empty=False):
     gets user input as string
     returns boolean
     """
-    if user_input == "" and empty is False:
+    if (user_input == "" or None) and empty is False:
         print("Ce champ ne peut pas être vide")
         return False
     return True
@@ -30,7 +31,11 @@ def input_validated(user_input, empty=False):
 def request_commands(view_url, operation, request_data:dict=None, object_id:int=None, object_name:str=None):
     """
     roots the command request to the view
-    object_name should be a string and will be used only if object_id is none.
+    gets view_url as string, request_data as dict of parameters, object_id as int to filter on a specific id
+    returns a list of dict with the last entry being :
+      {'response_status' being the response.status_code,  
+       'operation' if success,  
+       'response_text' if request failed}  
     """
     message_invalid = "Requete non valide"
     request_url = f"{BASE_URL}{view_url}/"
@@ -56,16 +61,22 @@ def request_commands(view_url, operation, request_data:dict=None, object_id:int=
     else:
         return message_invalid
 
+    result = []
+    if response.text != '':
+        result = response.json()
 
-    if response.status_code != 200:
-        return response.text
+    if isinstance(result, dict):
+        result = [result]
 
-    if operation == "read":
-        if response.json() == []:
-            return None
-        return response.json()
+    response_data = {}
+    response_data['operation'] = operation
+    response_data['response_status'] = response.status_code
+    if response.status_code // 100 != 2:
+        response_data['response_text'] = response.text
 
-    return operation
+    result.append(response_data)
+
+    return result
 
 def print_command_result(title:str="", printable=None):
     """gets a title and an iterable to print"""
@@ -146,24 +157,83 @@ def get_object_from_any_field(view_url, filter_field_name:str, filter_field_valu
     gets view, a field_name from an object and it's value for filtering
     returns the object found
     """
-    request_result = request_commands(
+    result = request_commands(
         view_url=view_url,
         operation='read',
         object_id=None
         )
+    request_data = result.pop(-1)
 
-    for item in request_result:
+    if request_data['response_status'] != 200:
+        return None
+
+    for item in result:
         if item[filter_field_name] == filter_field_value :
             return item
 
 
 def get_object_field_from_id(view_url, object_id:int):
     """
-    gets view, object_id
-    returns the object found
+    gets view's url as string, object_id as integet
+    returns the object found as dict
     """
-    return request_commands(
+    result = request_commands(
         view_url=view_url,
         operation='read',
         object_id=object_id
         )
+    request_data = result.pop(-1)
+
+    if request_data['response_status'] == 200:
+        return result[0]
+
+def get_date_time_from_user()-> datetime:
+    """
+    Returns formated date-time from user's input
+    """
+    user_input_list = [
+        'year',
+        'month',
+        'day',
+        'hour',
+        'minute'
+    ]
+    user_input_description = {
+        'year': 'Année (YYYY): ',
+        'month': 'Mois (MM): ',
+        'day': 'Jour (DD): ',
+        'hour': 'Heure (HH): ',
+        'minute': 'Minutes (MM): '
+    }
+
+    user_input_result = {}
+    result = ''
+    for line in user_input_list:
+        user_input= input(user_input_description[line])
+
+        user_input_result[line] = user_input
+        if result == '':
+            pass
+        elif line == 'hour':
+            result = result + ' '
+        elif line == 'minute':
+            result = result + ':'
+        else:
+            result = result + '/'
+
+        if input_validated(user_input=user_input) is False:
+            return None
+
+        #reformatting
+        if line == 'year':
+            user_input = user_input.zfill(4)
+        else:
+            user_input = user_input.zfill(2)
+
+        result = result + str(user_input)
+
+    try:
+        result = datetime.strptime(result+ ":00", '%Y/%m/%d %H:%M:%S')
+        return result
+    except ValueError:
+        return None

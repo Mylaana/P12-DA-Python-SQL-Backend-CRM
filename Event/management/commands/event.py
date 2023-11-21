@@ -2,7 +2,7 @@ from datetime import datetime
 from django.core.management.base import BaseCommand
 from Event.models import Event
 from EpicEvents.utils import input_validated, request_commands, print_command_result
-from EpicEvents.utils import get_object_from_field_name
+from EpicEvents.utils import get_object_from_field_name, get_date_time_from_user
 from EpicEvents.utils import ERROR_MESSAGE
 from getpass import getpass
 
@@ -22,8 +22,8 @@ EVENT_DESCRIPTION = {
     'ee_contact': "Nom du contact EpicEvents: ",
     'contract': "Contrat: ",
     'name': "Nom de l'événement: ",
-    'date_start': "Date de début [DD/MM/YYYY hh:mm]: ",
-    'date_end': "Date de fin [DD/MM/YYYY hh:mm]: ",
+    'date_start': "Date de début: ",
+    'date_end': "Date de fin: ",
     'location': "Lieu: ",
     'attendees': "Nombre de participants: ",
     'notes': "Notes: ",
@@ -52,7 +52,7 @@ class Command(BaseCommand):
                 print_command_result("liste des événements :", result)
 
         elif options['read']:
-            event_name = input("Information de l'événement: ")
+            event_name = input("Nom de l'événement: ")
             event = get_object_from_field_name(
                 view_url='event',
                 filter_field_name='name',
@@ -67,12 +67,12 @@ class Command(BaseCommand):
             event_info = []
             for line in EVENT_FIELD_LIST:
                 if line == 'contract':
-                    client = get_object_from_field_name(
+                    contract = get_object_from_field_name(
                         filter_field_name='id',
                         filter_field_value=event['contract'],
                         view_url='contract'
                     )
-                    event_info.append(f"{EVENT_DESCRIPTION[line]} {client['information']}")
+                    event_info.append(f"{EVENT_DESCRIPTION[line]} {contract['information']}")
                 elif line == 'ee_contact':
                     user = get_object_from_field_name(
                         filter_field_name='id',
@@ -93,20 +93,30 @@ class Command(BaseCommand):
             # gets event's info from user's input
             event_data = {}
             for line in event_field_list_create:
-                if line == 'client':
-                    client = get_object_from_field_name(
-                        filter_field_name='name',
+                if line == 'contract':
+                    contract = get_object_from_field_name(
+                        filter_field_name='information',
                         filter_field_value=input(EVENT_DESCRIPTION[line]),
-                        view_url='client'
+                        view_url='contract'
                         )
-                    event_input = client['id']
+                    if contract is None:
+                        print(ERROR_MESSAGE['contract_not_existing'])
+                        return None
+                    event_input = contract['id']
                 elif line == 'ee_contact':
                     user = get_object_from_field_name(
                         filter_field_name='username',
                         filter_field_value=input(EVENT_DESCRIPTION[line]),
                         view_url='user'
                     )
+                    if  user is None:
+                        print(ERROR_MESSAGE['user_not_existing'])
+                        return None
+
                     event_input = user['id']
+                elif 'date' in line:
+                    print(EVENT_DESCRIPTION[line])
+                    event_input = str(get_date_time_from_user())
                 else:
                     event_input = input(EVENT_DESCRIPTION[line])
 
@@ -114,18 +124,19 @@ class Command(BaseCommand):
                 if not input_valid:
                     return
                 event_data[line] = event_input
-            print(event_data)
+
             result = self.event_create(event_data)
 
-            if result is None:
+            if result[-1]['response_status'] // 100 != 2 :
                 print_command_result('Impossible de créer cet événement.')
+                print(result['response_text'])
             else:
-                print_command_result(f"Evénement '{event_data['information']}' créé avec succès")
+                print_command_result(f"Evénement '{event_data['name']}' créé avec succès")
 
         elif options['delete']:
             event_name = input("Information de l'événement à supprimer: ")
             event = get_object_from_field_name(
-                filter_field_name='information',
+                filter_field_name='name',
                 filter_field_value=event_name,
                 view_url='event'
                 )
@@ -135,15 +146,16 @@ class Command(BaseCommand):
                 return
 
             result = self.event_delete(event_id=event['id'])
-            if result is None:
+
+            if result[-1]['response_status'] // 100 != 2 :
                 print_command_result("Impossible de supprimer cet événement")
             else:
                 print_command_result(f"'{event_name}' supprimé avec succès.")
 
         elif options['update']:
-            event_name = input("Information de l'événement à modifier: ")
+            event_name = input("Nom de l'événement à modifier: ")
             event_data = get_object_from_field_name(
-                filter_field_name='information',
+                filter_field_name='name',
                 filter_field_value=event_name,
                 view_url='event'
                 )
@@ -156,14 +168,14 @@ class Command(BaseCommand):
             print('Entrer les valeurs à mettre à jour, laisser vide pour garder les existantes:')
 
             for line in EVENT_FIELD_LIST:
-                if line == 'client':
-                    client = get_object_from_field_name(
+                if line == 'contract':
+                    contract = get_object_from_field_name(
                         filter_field_name='id',
-                        filter_field_value=event_data['client'],
-                        view_url='client'
+                        filter_field_value=event_data['contract'],
+                        view_url='contract'
                         )
                     event_description[line] = event_description[line].replace(
-                        ':',f" ({client['name']}):")
+                        ':',f" ({contract['information']}):")
                 elif line == 'ee_contact':
                     user = get_object_from_field_name(
                         filter_field_name='id',
@@ -176,21 +188,28 @@ class Command(BaseCommand):
                     event_description[line] = event_description[line].replace(
                         ':',f' ({event_data[line]}):')
 
-                event_input = input(event_description[line])
+                if 'date' in line:
+                    print(event_description[line])
+                    print("Entrer n'importe quelle valeur pour ouvrir le menu de saisie de date, sinon laisser vide.")
+                    event_input = input()
+                    if event_input != '':
+                        event_input = str(get_date_time_from_user())
+                else:
+                    event_input = input(event_description[line])
 
                 # modify the stored value only if user entered something for this line
                 if event_input != "" and event_data[line] != event_input:
-                    # getting client & ee_contact id from user's input
-                    if line == 'client':
-                        client = get_object_from_field_name(
+                    # getting contract & ee_contact id from user's input
+                    if line == 'contract':
+                        contract = get_object_from_field_name(
                             filter_field_name='name',
                             filter_field_value=event_input,
-                            view_url='client'
+                            view_url='contract'
                             )
-                        if client is None:
-                            print_command_result(ERROR_MESSAGE['client_not_existing'])
+                        if contract is None:
+                            print_command_result(ERROR_MESSAGE['contract_not_existing'])
                             return
-                        event_data[line] = client['id']
+                        event_data[line] = contract['id']
                     elif line == 'ee_contact':
                         user = get_object_from_field_name(
                             filter_field_name='username',
@@ -206,7 +225,8 @@ class Command(BaseCommand):
 
             result = self.event_update(
                 event_id=event_data['id'], event_data=event_data)
-            if result is None:
+
+            if result[-1]['response_status'] // 100 != 2 :
                 print_command_result("Impossible de modifier cet événement")
             else:
                 print_command_result(f"'{event_name}' modifié avec succès.")
@@ -218,12 +238,13 @@ class Command(BaseCommand):
         returns a list of event or None
         '"""
         response = request_commands(view_url='event', operation="read")
-        if response is None:
+        response_data = response.pop(-1)
+        if response_data['response_status'] != 200 :
             return None
 
         event_list = []
         for event_data in response:
-            event_list.append(event_data['information'])
+            event_list.append(event_data['name'])
 
         return event_list
 
