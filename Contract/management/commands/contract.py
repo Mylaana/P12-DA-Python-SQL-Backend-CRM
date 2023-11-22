@@ -95,6 +95,9 @@ class Command(BaseCommand):
                         filter_field_value=input(CONTRACT_DESCRIPTION[line]),
                         view_url='client'
                         )
+                    if client is None:
+                        print(ERROR_MESSAGE['clinet_not_existing'])
+                        return None
                     contract_input = client['id']
                 elif line == 'ee_contact':
                     user = get_object_from_field_name(
@@ -102,6 +105,9 @@ class Command(BaseCommand):
                         filter_field_value=input(CONTRACT_DESCRIPTION[line]),
                         view_url='user'
                     )
+                    if  user is None:
+                        print(ERROR_MESSAGE['user_not_existing'])
+                        return None
                     contract_input = user['id']
                 else:
                     contract_input = input(CONTRACT_DESCRIPTION[line])
@@ -110,10 +116,10 @@ class Command(BaseCommand):
                 if not input_valid:
                     return
                 contract_data[line] = contract_input
-            print(contract_data)
+
             result = self.contract_create(contract_data)
 
-            if result is None:
+            if result[-1]['response_status'] // 100 != 2 :
                 print_command_result('Impossible de créer cet contrat.')
             else:
                 print_command_result(f"Contrat '{contract_data['information']}' créé avec succès")
@@ -131,7 +137,7 @@ class Command(BaseCommand):
                 return
 
             result = self.contract_delete(contract_id=contract['id'])
-            if result is None:
+            if result[-1]['response_status'] // 100 != 2 :
                 print_command_result("Impossible de supprimer ce contrat")
             else:
                 print_command_result(f"'{contract_name}' supprimé avec succès.")
@@ -202,7 +208,7 @@ class Command(BaseCommand):
 
             result = self.contract_update(
                 contract_id=contract_data['id'], contract_data=contract_data)
-            if result is None:
+            if result[-1]['response_status'] // 100 != 2 :
                 print_command_result("Impossible de modifier ce contrat")
             else:
                 print_command_result(f"'{contract_name}' modifié avec succès.")
@@ -214,7 +220,8 @@ class Command(BaseCommand):
         returns a list of contract or None
         '"""
         response = request_commands(view_url='contract', operation="read")
-        if response is None:
+        response_data = response.pop(-1)
+        if response_data['response_status'] // 100 != 2 :
             return None
 
         contract_list = []

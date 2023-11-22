@@ -2,8 +2,9 @@ from datetime import datetime
 from django.core.management.base import BaseCommand
 from UserProfile.models import UserProfile
 from EpicEvents.utils import input_validated, request_commands, print_command_result
-from EpicEvents.utils import get_ee_contact_id, get_team_name, get_team_id
+from EpicEvents.utils import get_object_field_from_id, get_object_from_field_name
 from getpass import getpass
+from EpicEvents.utils import ERROR_MESSAGE
 
 
 USER_FIELD_LIST_SAFE = [
@@ -64,20 +65,26 @@ class Command(BaseCommand):
 
         elif options['read']:
             user_name = input("Nom de l'utilisateur: ")
-            user_id = get_ee_contact_id(username=user_name)
-            if user_id is None:
-                print_command_result("Impossible de trouver cet utilisateur.")
+            user = get_object_from_field_name(
+                view_url='user',
+                filter_field_name='username',
+                filter_field_value=user_name,
+                )
+            if user is None:
+                print_command_result(ERROR_MESSAGE['user_not_existing'])
                 return
-
-            result = self.user_read(user_id=user_id)
+            team = get_object_field_from_id(
+                view_url='team',
+                object_id=user['team']
+                )
 
             user_info = []
             for line in USER_FIELD_LIST_SAFE:
                 if line == 'team':
-                    user_info.append(f"{USER_DESCRIPTION[line]} {get_team_name(result[line])}")
+                    user_info.append(f"{USER_DESCRIPTION[line]} {team['name']}")
                     continue
 
-                user_info.append(f"{USER_DESCRIPTION[line]} {result[line]}")
+                user_info.append(f"{USER_DESCRIPTION[line]} {user[line]}")
 
             print_command_result(printable=user_info)
 
@@ -92,7 +99,15 @@ class Command(BaseCommand):
                 if line == 'password':
                     user_input = getpass(USER_DESCRIPTION[line])
                 elif line == 'team':
-                    user_input = get_team_id(input(USER_DESCRIPTION[line]))
+                    team = get_object_from_field_name(
+                        view_url='team',
+                        filter_field_name='name',
+                        filter_field_value=input(USER_DESCRIPTION[line])
+                        )
+                    if team is None:
+                        print(ERROR_MESSAGE['team_not_existing'])
+                        return None
+                    user_input = team['id']
                 else:
                     user_input = input(USER_DESCRIPTION[line])
 
@@ -100,7 +115,7 @@ class Command(BaseCommand):
                 if not input_valid:
                     return
                 user_data[line] = user_input
-            print(user_data)
+
             result = self.user_create(user_data)
 
             if result is None:
@@ -110,37 +125,46 @@ class Command(BaseCommand):
 
         elif options['delete']:
             user_name = input("Nom de l'utilisateur à supprimer: ")
-            user_id = get_ee_contact_id(username=user_name)
-
-            if user_id is None:
-                print("Impossible de trouver cet utilisateur dans la base de données.")
+            user = get_object_from_field_name(
+                view_url='user',
+                filter_field_name='username',
+                filter_field_value=user_name,
+                )
+            if user is None:
+                print_command_result(ERROR_MESSAGE['user_not_existing'])
                 return
 
-            result = self.user_delete(user_id=user_id)
-            if result is None:
+            result = self.user_delete(user_id=user['id'])
+
+            if result[-1]['response_status'] // 100 != 2 :
                 print_command_result("Impossible de supprimer ce user")
             else:
                 print_command_result(f"'{user_name}' supprimé avec succès.")
 
         elif options['update']:
             user_name = input("Nom de l'utilisateur à modifier: ")
-            user_id = get_ee_contact_id(username=user_name)
-
-            if user_id is None:
-                print("Impossible de trouver cet utilisateur dans la base de données.")
+            user_data = get_object_from_field_name(
+                view_url='user',
+                filter_field_name='username',
+                filter_field_value=user_name,
+                )
+            if user_data is None:
+                print_command_result(ERROR_MESSAGE['user_not_existing'])
                 return
 
             # get user data
-            user_data = self.user_read(user_id)
             user_description = USER_DESCRIPTION
             print('Entrer les valeurs à mettre à jour, laisser vide pour garder les existantes:')
-            print(USER_FIELD_LIST_UNSAFE)
-            print(user_description)
+
             for line in USER_FIELD_LIST_UNSAFE:
                 if line == 'team':
+                    team = get_object_field_from_id(
+                        view_url='team',
+                        object_id=user_data[line]
+                        )
                     user_description[line] = user_description[line].replace(
-                        ':',f' ({get_team_name(user_data[line])}):')
-                else:
+                        ':',f' ({team["name"]}):')
+                elif line != 'password':
                     user_description[line] = user_description[line].replace(
                         ':',f' ({user_data[line]}):')
 
@@ -153,9 +177,10 @@ class Command(BaseCommand):
                 if user_input != "":
                     user_data[line] = user_input
 
-            result = self.user_update(user_id=user_id, user_data=user_data)
-            if result is None:
-                print_command_result("Impossible de modifier ce user")
+            result = self.user_update(user_id=user_data['id'], user_data=user_data)
+
+            if result[-1]['response_status'] // 100 != 2 :
+                print_command_result("Impossible de modifier cet utilisateur")
             else:
                 print_command_result(f"'{user_name}' modifié avec succès.")
 
@@ -166,7 +191,8 @@ class Command(BaseCommand):
         returns a list of user or None
         '"""
         response = request_commands(view_url='user', operation="read")
-        if response is None:
+        response_data = response.pop(-1)
+        if response_data['response_status'] != 200 :
             return None
 
         user_list = []
@@ -174,7 +200,7 @@ class Command(BaseCommand):
             user_list.append(user_data['username'])
 
         return user_list
-
+        
     def user_read(self, user_id:int):
         """
         handles reading one user

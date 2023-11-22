@@ -248,13 +248,6 @@ class Command(BaseCommand):
 
         return event_list
 
-    def event_read(self, event_id:int):
-        """
-        handles reading one event
-        returns dict if found or none if not found
-        """
-        return request_commands(view_url='event', operation="read", object_id=event_id)
-
     def event_create(self, event_data:dict):
         """handles creating a new event
         gets a dict for event data
