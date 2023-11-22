@@ -118,8 +118,9 @@ class Command(BaseCommand):
 
             result = self.user_create(user_data)
 
-            if result is None:
+            if result[-1]['response_status'] // 100 != 2 :
                 print_command_result('Impossible de créer cet utilisateur.')
+                print(result[-1]['response_text'])
             else:
                 print_command_result(f"Utilisateur '{user_data['username']}' créé avec succès")
 

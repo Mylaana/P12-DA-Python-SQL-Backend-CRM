@@ -85,8 +85,6 @@ class Command(BaseCommand):
 
             print_command_result(printable=event_info)
 
-            return
-
         elif options['create']:
             event_field_list_create = EVENT_FIELD_LIST
 

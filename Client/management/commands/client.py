@@ -110,7 +110,7 @@ class Command(BaseCommand):
 
             if result[-1]['response_status'] // 100 != 2 :
                 print_command_result('Impossible de créer cet événement.')
-                print(result['response_text'])
+                print(result[-1]['response_text'])
             else:
                 print_command_result(f"Evénement '{client_data['name']}' créé avec succès")
 
