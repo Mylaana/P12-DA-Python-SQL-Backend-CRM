@@ -1,8 +1,6 @@
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
-from rest_framework.decorators import action
-
 from UserProfile.serializers import UserProfileSerializer, TeamSerializer
 from UserProfile.models import UserProfile, Team
 
@@ -12,16 +10,33 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializer
     # permission_classes = [IsAuthenticated, permissions.UpdateRessource]
     queryset = UserProfile.objects.all()
-    """
-    def perform_create(self, serializer):
-        handles create operation
-        # getting the user from it's id
-        user_id = self.request.data.get('ee_contact')
-        user = UserProfile.objects.get(pk=user_id)
-        serializer.save(ee_contact=user)
-    """
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = UserProfile.objects.all()
+        username = self.request.query_params.get('username')
+
+        if username is not None:
+            queryset = UserProfile.objects.filter(username=username.replace("/",""))
+        return queryset
+
 class TeamViewSet(viewsets.ModelViewSet):
     """Handle CRUD operations on Team model"""
     serializer_class = TeamSerializer
     # permission_classes = [IsAuthenticated, permissions.UpdateRessource]
     queryset = Team.objects.all()
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = Team.objects.all()
+        name = self.request.query_params.get('name')
+
+        if name is not None:
+            queryset = Team.objects.filter(name=name.replace("/",""))
+        return queryset
