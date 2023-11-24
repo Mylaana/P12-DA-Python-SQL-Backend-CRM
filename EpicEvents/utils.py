@@ -89,7 +89,7 @@ def request_commands(view_url, operation, request_data:dict=None, object_id:int=
         response_data['response_text'] = response.text
 
     result.append(response_data)
-    print(result)
+
     return result
 
 def print_command_result(title:str="", printable=None):
