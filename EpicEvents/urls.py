@@ -18,11 +18,12 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from .authentication import CustomObtainAuthToken
+from .authentication import CustomObtainAuthToken, LogoutView
 from Client.views import ClientViewSet
 from UserProfile.views import UserProfileViewSet, TeamViewSet
 from Contract.views import ContractViewSet
 from Event.views import EventViewSet
+
 
 router = DefaultRouter()
 router.register('client', ClientViewSet)
@@ -34,5 +35,6 @@ router.register('event', EventViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('token-auth/', CustomObtainAuthToken.as_view(), name='token_auth'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('', include(router.urls)),
 ]

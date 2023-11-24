@@ -11,7 +11,7 @@ from UserProfile.models import UserProfile
 class ClientViewSet(viewsets.ModelViewSet):
     """Handle CRUD operations on Client model"""
     serializer_class = serializers.ClientSerializer
-    # permission_classes = [IsAuthenticated, permissions.UpdateRessource]
+    permission_classes = [IsAuthenticated,]
     queryset = Client.objects.all()
 
     def perform_create(self, serializer):

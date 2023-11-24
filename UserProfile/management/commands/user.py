@@ -194,6 +194,7 @@ class Command(BaseCommand):
         response = request_commands(view_url='user', operation="read")
         response_data = response.pop(-1)
         if response_data['response_status'] != 200 :
+            print(response_data)
             return None
 
         user_list = []

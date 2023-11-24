@@ -22,7 +22,7 @@ config.read(db_config_path)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+BASE_URL = "http://localhost:8000/"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -52,6 +52,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

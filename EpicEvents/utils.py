@@ -4,9 +4,8 @@ from Client.models import Client
 from UserProfile.models import UserProfile, Team
 import json
 from datetime import datetime
-
-
-BASE_URL = "http://localhost:8000/"
+from EpicEvents.authentication import read_token
+from EpicEvents.settings import BASE_URL
 
 
 ERROR_MESSAGE = {
@@ -54,6 +53,11 @@ def request_commands(view_url, operation, request_data:dict=None, object_id:int=
 
     headers={"Content-Type": "application/json",}
 
+    # getting the access token from json file then adding to the request header
+    access_token = read_token()
+    if access_token is not None:
+        headers['Authorization'] =  f'Token {access_token["token"]}'
+
     if operation == "read":
         response = requests.get(url=request_url, json=request_data, headers=headers, timeout=5000)
 
@@ -85,7 +89,7 @@ def request_commands(view_url, operation, request_data:dict=None, object_id:int=
         response_data['response_text'] = response.text
 
     result.append(response_data)
-
+    print(result)
     return result
 
 def print_command_result(title:str="", printable=None):

@@ -9,6 +9,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     """Handle CRUD operations on UserProfile model"""
     serializer_class = UserProfileSerializer
     # permission_classes = [IsAuthenticated, permissions.UpdateRessource]
+    permission_classes = [IsAuthenticated,]
     queryset = UserProfile.objects.all()
 
     def get_queryset(self):
@@ -26,7 +27,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 class TeamViewSet(viewsets.ModelViewSet):
     """Handle CRUD operations on Team model"""
     serializer_class = TeamSerializer
-    # permission_classes = [IsAuthenticated, permissions.UpdateRessource]
+    permission_classes = [IsAuthenticated,]
     queryset = Team.objects.all()
 
     def get_queryset(self):

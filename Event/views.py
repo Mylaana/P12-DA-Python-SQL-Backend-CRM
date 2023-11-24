@@ -10,7 +10,7 @@ from Event.models import Event
 class EventViewSet(viewsets.ModelViewSet):
     """Handle CRUD operations on UserProfile model"""
     serializer_class = EventSerializer
-    # permission_classes = [IsAuthenticated, permissions.UpdateRessource]
+    permission_classes = [IsAuthenticated,]
     queryset = Event.objects.all()
 
     def get_queryset(self):

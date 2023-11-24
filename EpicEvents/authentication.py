@@ -1,11 +1,16 @@
+import os
 from getpass import getpass
 import json
 import requests
-from EpicEvents.settings import BASE_DIR
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from EpicEvents.settings import BASE_DIR, BASE_URL
+
 
 class CustomObtainAuthToken(ObtainAuthToken):
     """handles the token generation"""
@@ -14,9 +19,20 @@ class CustomObtainAuthToken(ObtainAuthToken):
         if serializer.is_valid():
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)
+            print(token.key)
+            print(token)
             return Response({'token': token.key})
         return Response({'error': 'Login failed'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class LogoutView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        # deleting the token from database
+        request.auth.delete()
+        return Response({'detail': 'Déconnexion réussie.'}, status=status.HTTP_200_OK)
 
 AUTH_URL = "http://localhost:8000/token-auth/"
 TOKEN_FILENAME = "credentials.json"
@@ -55,8 +71,22 @@ def write_token(auth_data):
 
 def read_token() -> dict:
     """loads token from credential json file"""
+    #checks if file exists
+    if os.path.isfile(str(BASE_DIR) + "/" + TOKEN_FILENAME) is False:
+        return None
 
     with open(TOKEN_FILENAME, 'r', encoding='utf-8') as json_file:
         loaded_data = json.load(json_file)
 
     return loaded_data
+
+def request_logout():
+    """logs out the current user"""
+    access_token = read_token()
+    headers={
+        "Content-Type": "application/json",
+        "Authorization": f"Token {access_token['token']}",
+             }
+    response = requests.post(url=BASE_URL + '/logout/', headers=headers, timeout=5000)
+    return response
+
