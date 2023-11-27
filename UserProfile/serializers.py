@@ -18,6 +18,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
         """Create and return new user"""
         user = UserProfile.objects.create_user(**validated_data)
         return user
+    
+    def update(self, instance, validated_data):
+        """Handle updating user account"""
+        if 'password' in validated_data:
+            password = validated_data.pop('password')
+            instance.set_password(password)
+
+        return super().update(instance, validated_data)
 
 class TeamSerializer(serializers.ModelSerializer):
     """Serializes UserProfile model"""

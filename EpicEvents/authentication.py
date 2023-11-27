@@ -19,8 +19,6 @@ class CustomObtainAuthToken(ObtainAuthToken):
         if serializer.is_valid():
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)
-            print(token.key)
-            print(token)
             return Response({'token': token.key})
         return Response({'error': 'Login failed'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -54,6 +52,7 @@ def request_get_token():
     if response.status_code != 200:
         print("Authentification impossible")
         print(f"response status code: {response.status_code}")
+        print(f"response status test: {response.text}")
         return auth_data
 
     auth_data['token'] = response.json().get('token')
