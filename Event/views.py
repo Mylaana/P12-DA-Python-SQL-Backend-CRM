@@ -5,12 +5,13 @@ from rest_framework.decorators import action
 
 from Event.serializers import EventSerializer
 from Event.models import Event
+from EpicEvents import permissions
 
 
 class EventViewSet(viewsets.ModelViewSet):
     """Handle CRUD operations on UserProfile model"""
     serializer_class = EventSerializer
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, permissions.EventPermisison]
     queryset = Event.objects.all()
 
     def get_queryset(self):

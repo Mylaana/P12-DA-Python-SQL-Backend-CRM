@@ -5,12 +5,12 @@ from rest_framework.decorators import action
 
 from Contract.serializers import ContractSerializer
 from Contract.models import Contract
-
+from EpicEvents import permissions
 
 class ContractViewSet(viewsets.ModelViewSet):
     """Handle CRUD operations on UserProfile model"""
     serializer_class = ContractSerializer
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, permissions.ContractPermisison]
     queryset = Contract.objects.all()
 
 

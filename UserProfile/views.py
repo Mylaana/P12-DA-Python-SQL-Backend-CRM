@@ -3,13 +3,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from UserProfile.serializers import UserProfileSerializer, TeamSerializer
 from UserProfile.models import UserProfile, Team
-
+from EpicEvents import permissions
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     """Handle CRUD operations on UserProfile model"""
     serializer_class = UserProfileSerializer
     # permission_classes = [IsAuthenticated, permissions.UpdateRessource]
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, permissions.UserProfilePermission]
     queryset = UserProfile.objects.all()
 
     def get_queryset(self):
@@ -27,7 +27,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 class TeamViewSet(viewsets.ModelViewSet):
     """Handle CRUD operations on Team model"""
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, permissions.TeamPermisison]
     queryset = Team.objects.all()
 
     def get_queryset(self):
