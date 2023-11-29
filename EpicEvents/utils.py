@@ -135,21 +135,8 @@ def get_object_from_any_field(view_url, filter_field_name:str, filter_field_valu
 
     if request_data['response_status'] == 200:
         return result[0]
-    
+
     return
-    result = request_commands(
-        view_url=view_url,
-        operation='read',
-        object_id=None
-        )
-    request_data = result.pop(-1)
-
-    if request_data['response_status'] != 200:
-        return None
-
-    for item in result:
-        if item[filter_field_name] == filter_field_value :
-            return item
 
 
 def get_object_field_from_id(view_url, object_id:int):
