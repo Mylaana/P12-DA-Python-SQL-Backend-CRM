@@ -5,8 +5,9 @@ from unittest.mock import patch, Mock
 from django.core.management import call_command
 from tests.fixtures import simulate_user_input
 import time
-from EpicEvents.utils import get_ee_contact_id
+from EpicEvents.utils import get_object_field_from_id, get_object_from_any_field
 import json
+
 
 TEST_USER = {'username': 'test_user',
              'password': 'test_password123$A',
@@ -15,53 +16,64 @@ TEST_USER = {'username': 'test_user',
              'first_name': 'test user prenom',
              'last_name': 'test user nom',
              'phone': '0000000000'}
-"""
-@pytest.mark.django_db
-@patch('UserProfile.management.commands.user.getpass', Mock(return_value='test_password123$A'))
-def test_handle_create_should_create_user(capfd, simulate_user_input):
-    simulate_user_input(
-        [TEST_USER['username'],
-        TEST_USER['password'],
-        TEST_USER['team'],
-        TEST_USER['email'],
-        TEST_USER['first_name'],
-        TEST_USER['last_name'],
-        TEST_USER['phone']
-        ])
-
-    call_command('user', '-create')
-    out, err = capfd.readouterr()
-    expected_value = f"Utilisateur '{TEST_USER['username']}' créé avec succès"
-    expected_user_data = {}
-    user = UserProfile.objects.filter(username=TEST_USER['username']).first()
-    print(user)
-    assert user is not None
-    # assert expected_value.strip().lower() in out.strip().lower()
-"""
-
 
 @pytest.mark.django_db
-def test_handle_create_user_should_create():
+def test_user_create_should_create():
     command = user.Command()
     returned_value = command.user_create(TEST_USER)
-    # parsed_value = json.loads(returned_value)
-
-    assert TEST_USER['username'] in returned_value
-    user_id = get_ee_contact_id(username=TEST_USER['username'])
-    print(user_id)
-    assert user_id is not None
+    assert returned_value[0]['username'] == TEST_USER['username']
 
 @pytest.mark.django_db
-def test_handle_delete_user_should_delete():
+def test_user_list_should_list():
     command = user.Command()
-    time.sleep(1)
-    user_id = get_ee_contact_id(username=TEST_USER['username'])
-    print(TEST_USER['username'])
-    print(user_id)
-    user_id = get_ee_contact_id(username=TEST_USER['username'])
-    assert user_id is not None
-    returned_value = command.user_delete(user_id=user_id)
+    returned_value = command.user_list()
+    assert TEST_USER['username'] in returned_value
 
-    # assert returned_value == 'delete'
-    user_id = get_ee_contact_id(username=TEST_USER['username'])
-    assert user_id is None
+@pytest.mark.django_db
+def test_user_read_should_return_user_info():
+    command = user.Command()
+    user_object = get_object_from_any_field(
+        view_url='user',
+        filter_field_name='username',
+        filter_field_value=TEST_USER['username']
+        )
+
+    returned_value = command.user_read(user_id=user_object['id'])
+
+    assert user_object is not None
+    assert user_object['username'] == TEST_USER['username']
+
+@pytest.mark.django_db
+def test_user_update_should_update():
+    command = user.Command()
+    user_object = get_object_from_any_field(
+        view_url='user',
+        filter_field_name='username',
+        filter_field_value=TEST_USER['username']
+        )
+
+    # asserting test_user state before update
+    assert user_object is not None
+    assert user_object['phone'] == TEST_USER['phone']
+
+    test_user = TEST_USER
+    test_user['phone'] = 111
+
+    returned_value = command.user_update(user_id=user_object['id'], user_data=test_user)
+    assert str(returned_value[0]['phone']) == '111'
+    assert returned_value[-1]['operation'] == 'update'
+
+@pytest.mark.django_db
+def test_user_delete_should_delete():
+    command = user.Command()
+    user_object = get_object_from_any_field(
+        view_url='user',
+        filter_field_name='username',
+        filter_field_value=TEST_USER['username']
+        )
+
+    # asserting user is in DB before deleting
+    assert user_object is not None
+
+    returned_value = command.user_delete(user_id=user_object['id'])
+    assert returned_value[0]['operation'] == 'delete'

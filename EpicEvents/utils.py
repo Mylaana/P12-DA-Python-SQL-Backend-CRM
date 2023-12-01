@@ -134,6 +134,8 @@ def get_object_from_any_field(view_url, filter_field_name:str, filter_field_valu
     request_data = result.pop(-1)
 
     if request_data['response_status'] == 200:
+        if result == []:
+            return None
         return result[0]
 
     return
