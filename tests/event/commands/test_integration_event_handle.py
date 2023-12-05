@@ -3,7 +3,7 @@ from Event.management.commands import event
 import pytest
 from unittest.mock import patch, Mock
 from django.core.management import call_command
-from tests.fixtures import simulate_user_input, setup_session
+from tests.fixtures import simulate_user_input
 import time
 from EpicEvents.utils import get_object_field_from_id, get_object_from_any_field
 import json
@@ -71,14 +71,20 @@ def test_handle_read_should_print_event_info(capfd, simulate_user_input):
 
     assert expected_result in out
 
-def test_handle_update_should_update_contrac(capfd, simulate_user_input):
+def test_handle_update_should_update_event(capfd, simulate_user_input):
     simulate_user_input([
         TEST_EVENT['name'],
         '',
         '',
         '',
-        '',
-        '2',
+        'a',
+        TEST_EVENT['date_end_year'],
+        TEST_EVENT['date_end_month'],
+        TEST_EVENT['date_end_day'],
+        TEST_EVENT['date_end_hour'],
+        TEST_EVENT['date_end_minute'],
+        TEST_EVENT['location'],
+        2,
         '',
         ''
     ])

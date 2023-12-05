@@ -4,7 +4,7 @@ from Client.management.commands import client
 import pytest
 from unittest.mock import patch, Mock
 from django.core.management import call_command
-from tests.fixtures import simulate_user_input, setup_session, SETUP_CLIENT_FIELDS
+from tests.fixtures import simulate_user_input
 import time
 from EpicEvents.utils import get_object_field_from_id, get_object_from_any_field
 import json
@@ -22,6 +22,7 @@ TEST_CONTRACT = {
 @pytest.mark.django_db
 def test_contract_create_should_create():
     test_contract = TEST_CONTRACT
+    print(get_object_from_any_field('user','username','setup_user'))
     test_contract['ee_contact'] = get_object_from_any_field('user','username','setup_user')['id']
     test_contract['client'] = get_object_from_any_field('client','name','setup_client')['id']
     command = contract.Command()

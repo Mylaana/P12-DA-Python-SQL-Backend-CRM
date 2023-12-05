@@ -88,4 +88,3 @@ def request_logout():
              }
     response = requests.post(url=BASE_URL + '/logout/', headers=headers, timeout=5000)
     return response
-

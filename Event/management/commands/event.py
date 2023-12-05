@@ -185,16 +185,19 @@ class Command(BaseCommand):
                 else:
                     event_description[line] = event_description[line].replace(
                         ':',f' ({event_data[line]}):')
-
+                print(line)
                 if 'date' in line:
                     print(event_description[line])
-                    print("Entrer n'importe quelle valeur pour ouvrir le menu de saisie de date, sinon laisser vide.")
-                    event_input = input()
+                    event_input = input("Entrer n'importe quelle valeur pour ouvrir le menu de saisie de date, sinon laisser vide.")
+                    print(f'date event_input: {event_input}')
                     if event_input != '':
+                        print('get date time')
                         event_input = str(get_date_time_from_user())
+
                 else:
                     event_input = input(event_description[line])
-
+                print(f'input : {event_input}')
+                print(f'fin de {line}')
                 # modify the stored value only if user entered something for this line
                 if event_input != "" and event_data[line] != event_input:
                     # getting contract & ee_contact id from user's input

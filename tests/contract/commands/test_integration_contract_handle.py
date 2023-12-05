@@ -3,7 +3,7 @@ from Contract.management.commands import contract
 import pytest
 from unittest.mock import patch, Mock
 from django.core.management import call_command
-from tests.fixtures import simulate_user_input, setup_session
+from tests.fixtures import simulate_user_input
 import time
 from EpicEvents.utils import get_object_field_from_id, get_object_from_any_field
 import json
@@ -49,7 +49,7 @@ def test_handle_read_should_print_contract_info(capfd, simulate_user_input):
 
     assert expected_result in out
 
-def test_handle_update_should_update_contrac(capfd, simulate_user_input):
+def test_handle_update_should_update_contract(capfd, simulate_user_input):
     simulate_user_input([
         TEST_CONTRACT['information'],
         '',

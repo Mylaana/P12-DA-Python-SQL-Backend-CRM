@@ -21,6 +21,7 @@ TEST_USER = {'username': 'test_user',
 def test_user_create_should_create():
     command = user.Command()
     returned_value = command.user_create(TEST_USER)
+    print(returned_value)
     assert returned_value[0]['username'] == TEST_USER['username']
 
 @pytest.mark.django_db
