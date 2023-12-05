@@ -132,7 +132,7 @@ class Command(BaseCommand):
                 print_command_result(f"Evénement '{event_data['name']}' créé avec succès")
 
         elif options['delete']:
-            event_name = input("Information de l'événement à supprimer: ")
+            event_name = input("Nom de l'événement à supprimer: ")
             event = get_object_from_field_name(
                 filter_field_name='name',
                 filter_field_value=event_name,
@@ -185,19 +185,14 @@ class Command(BaseCommand):
                 else:
                     event_description[line] = event_description[line].replace(
                         ':',f' ({event_data[line]}):')
-                print(line)
                 if 'date' in line:
                     print(event_description[line])
                     event_input = input("Entrer n'importe quelle valeur pour ouvrir le menu de saisie de date, sinon laisser vide.")
-                    print(f'date event_input: {event_input}')
                     if event_input != '':
-                        print('get date time')
                         event_input = str(get_date_time_from_user())
 
                 else:
                     event_input = input(event_description[line])
-                print(f'input : {event_input}')
-                print(f'fin de {line}')
                 # modify the stored value only if user entered something for this line
                 if event_input != "" and event_data[line] != event_input:
                     # getting contract & ee_contact id from user's input
@@ -229,9 +224,9 @@ class Command(BaseCommand):
 
             if result[-1]['response_status'] // 100 != 2 :
                 print_command_result("Impossible de modifier cet événement")
+                print(result[-1]['response_text'])
             else:
                 print_command_result(f"'{event_name}' modifié avec succès.")
-
 
     def event_list(self):
         """

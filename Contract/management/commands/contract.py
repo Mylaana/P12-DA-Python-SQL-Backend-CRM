@@ -96,7 +96,7 @@ class Command(BaseCommand):
                         view_url='client'
                         )
                     if client is None:
-                        print(ERROR_MESSAGE['clinet_not_existing'])
+                        print(ERROR_MESSAGE['client_not_existing'])
                         return None
                     contract_input = client['id']
                 elif line == 'ee_contact':
@@ -121,7 +121,7 @@ class Command(BaseCommand):
 
             if result[-1]['response_status'] // 100 != 2 :
                 print_command_result('Impossible de créer cet contrat.')
-                print(result['response_text'])
+                print(result[-1]['response_text'])
             else:
                 print_command_result(f"Contrat '{contract_data['information']}' créé avec succès")
 
