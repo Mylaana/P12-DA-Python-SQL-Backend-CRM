@@ -20,7 +20,7 @@ ERROR_MESSAGE = {
 def input_validated(user_input, empty=False):
     """
     validates user input
-    gets user input as string
+    gets user input as string, optionnal boolean to accept empty inputs
     returns boolean
     """
     user_input = str(user_input)
@@ -124,8 +124,8 @@ def print_command_result(title:str="", printable=None):
 
 def get_object_from_field_name(view_url, filter_field_name:str, filter_field_value):
     """
-    gets a veiw and a field_name
-    returns object if found
+    gets a veiw name, a field_name to filter on and a filter value
+    returns the found object
     """
     # validating user input is legal before requests
     if not input_validated(filter_field_value):
@@ -169,8 +169,8 @@ def get_object_from_any_field(view_url, filter_field_name:str, filter_field_valu
 
 def get_object_field_from_id(view_url, object_id:int):
     """
-    gets view's url as string, object_id as integet
-    returns the object found as dict
+    gets view name, object_id as integer
+    returns dict
     """
     # validating user input is legal before requests
     if not input_validated(object_id):
@@ -188,7 +188,7 @@ def get_object_field_from_id(view_url, object_id:int):
 
 def get_date_time_from_user()-> datetime:
     """
-    Returns formated date-time from user's input
+    Returns formated date-time from user's prompted input
     """
     user_input_list = [
         'year',

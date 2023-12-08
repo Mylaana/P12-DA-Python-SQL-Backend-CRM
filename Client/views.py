@@ -24,8 +24,8 @@ class ClientViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
+        Optionally restricts the returned clients,
+        by filtering against a `name` query parameter in the URL.
         """
         queryset = Client.objects.all()
         name = self.request.query_params.get('name')

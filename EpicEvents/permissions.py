@@ -64,6 +64,9 @@ class EventPermisison(permissions.BasePermission):
     """Object permission management"""
 
     def has_permission(self, request, view):
+        """
+        method related permission management for events
+        """
         if request.user.is_admin:
             return True
 
@@ -81,7 +84,9 @@ class EventPermisison(permissions.BasePermission):
         return False
 
     def has_object_permission(self, request, view, obj):
-        """Check user is trying to update their own profile"""
+        """
+        object related permission management for events
+        """
         if request.user.is_admin:
             return True
 

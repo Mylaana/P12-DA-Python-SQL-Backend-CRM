@@ -218,6 +218,7 @@ class Command(BaseCommand):
     def contract_list(self, own:bool=False):
         """
         handles 'listing contracts
+        gets an optionnal boolean to add filtering
         returns a list of contract or None
         '"""
         response = request_commands(view_url='contract', operation="read")
