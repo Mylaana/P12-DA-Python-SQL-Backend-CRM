@@ -60,52 +60,52 @@ Assurez-vous d'avoir installé les outils suivants sur votre machine :
     python manage.py migrate
     ```
 
-Ces étapes garantissent que l'application CRM utilise la base de données MySQL.
+    Ces étapes garantissent que l'application CRM utilise la base de données MySQL.
 
 ### Utilisation du CRM
 1. Lancez l'application CRM avec la commande suivante :
 
-```bash
-python manage.py runserver
-```
+    ```bash
+    python manage.py runserver
+    ```
 L'outil CRM sera accessible à l'adresse http://localhost:8000.
 
 2. Liste des commandes de l'application :
-Toutes les commandes doivent être précédées de 'python manage.py ':
+    Toutes les commandes doivent être précédées de 'python manage.py ':
     Authentification :
-   ```bash
-   login # permets de s'authentifier dans la base de données.
-   logout # permet de se déconnecter.
-   ```
-
+       ```bash
+       login # permets de s'authentifier dans la base de données.
+       logout # permet de se déconnecter.
+       ```
+    
     Vous pouvez appeler les menus suivants :
-   ```bash
-   user # permettra d'intéragir avec les données liées aux utilisateurs.
-   team # permettra d'intéragir avec les données liées aux équipes.
-   client # permettra d'intéragir avec les données liées aux clients.
-   contract # permettra d'intéragir avec les données liées aux contrats.
-   event # permettra d'intéragir avec les données liées aux événements.
-   ```
-   Chaque menu doit être accompagné d'une opération :
-   ```bash
-   -list # listera tous les éléments correspondant au menu
-   -read # le CRM demandera le nom de l'élément à lire et affichera ensuite ses informations.
-   -create # le CRM demandera les informations clés de l'objet à créér puis l'ajoutera à la base de données.
-   -update # le CRM demandera le nom de l'élément à mettre à jour puis demandera à l'utilisateur quel(s) champ(s) mettre à jour.
-   -delete # le CRM demandera le nom de l'élément à supprimer puis le retirera de la base de données.
-   ```
-
-   Options supplémentaires :
-   ````bash
-   client -list -own # affichera uniquement les clients attribués à l'utilisateur actif.
-   contract -list -own # affichera uniquement les cotnrats attribués à l'utilisateur actif.
-   event -list -own # affichera uniquement les événements attribués à l'utilisateur actif.
-   client -list -no-owner # affichera uniquement les événements qui ne sont attribués à personne.
-   ```
-
-   Exemple d'utilisation :
-   ````bash
-   python manage.py client -create # permettra de créer un client.
-   python manage.py event -list # permettra d'afficher les événements.
-   python manage.py event -list -no-owner# permettra d'afficher les événements non attribués uniquement.
-   ```
+    ```bash
+    user # permettra d'intéragir avec les données liées aux utilisateurs.
+    team # permettra d'intéragir avec les données liées aux équipes.
+    client # permettra d'intéragir avec les données liées aux clients.
+    contract # permettra d'intéragir avec les données liées aux contrats.
+    event # permettra d'intéragir avec les données liées aux événements.
+    ```
+    Chaque menu doit être accompagné d'une opération :
+    ```bash
+    -list # listera tous les éléments correspondant au menu
+    -read # le CRM demandera le nom de l'élément à lire et affichera ensuite ses informations.
+    -create # le CRM demandera les informations clés de l'objet à créér puis l'ajoutera à la base de données.
+    -update # le CRM demandera le nom de l'élément à mettre à jour puis demandera à l'utilisateur quel(s) champ(s) mettre à jour.
+    -delete # le CRM demandera le nom de l'élément à supprimer puis le retirera de la base de données.
+    ```
+    
+    Options supplémentaires :
+    ```bash
+    client -list -own # affichera uniquement les clients attribués à l'utilisateur actif.
+    contract -list -own # affichera uniquement les cotnrats attribués à l'utilisateur actif.
+    event -list -own # affichera uniquement les événements attribués à l'utilisateur actif.
+    event -list -no-owner # affichera uniquement les événements qui ne sont attribués à personne.
+    ```
+    
+    Exemple d'utilisation :
+    ```bash
+    python manage.py client -create # permettra de créer un client.
+    python manage.py event -list # permettra d'afficher les événements.
+    python manage.py event -list -no-owner # permettra d'afficher les événements non attribués uniquement.
+    ```
