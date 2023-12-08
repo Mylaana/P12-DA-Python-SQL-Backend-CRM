@@ -3,16 +3,20 @@ from UserProfile.models import UserProfile, Team
 
 class UserProfileSerializer(serializers.ModelSerializer):
     """Serializes UserProfile model"""
+    team_name = serializers.SerializerMethodField()
 
     class Meta:
         model = UserProfile
-        fields = ('id', 'username', 'password', 'email','first_name', 'last_name', 'phone', 'team')
+        fields = ('id', 'username', 'password', 'email','first_name', 'last_name', 'phone', 'team', 'team_name')
         extra_kwargs = {
             'password': {
                 'write_only': True,
                 'style': {'input_type': 'password'}
                 }
             }
+
+    def get_team_name(self, obj):
+        return obj.team.name
 
     def create(self, validated_data):
         """Create and return new user"""

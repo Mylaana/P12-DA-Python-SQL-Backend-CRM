@@ -22,7 +22,7 @@ TEST_USER = {'username': 'test_user',
 def test_handle_create_should_create_user(capfd, simulate_user_input):
     simulate_user_input([
         'test_user',
-        'admin',
+        'gestion',
         'test_user@ee.com',
         'test user prenom',
         'test user nom',

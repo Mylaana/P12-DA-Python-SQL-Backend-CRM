@@ -24,7 +24,7 @@ class ContractSerializer(serializers.ModelSerializer):
             )
 
     def get_epicevents_contact_name(self, obj):
-        return UserProfile.objects.get(id=obj.ee_contact.id).username
+        return obj.ee_contact.username
     
     def get_client_name(self, obj):
-        return Client.objects.get(id=obj.client.id).name
+        return obj.client.name

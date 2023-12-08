@@ -33,6 +33,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         """parsing arguments passed to contract command"""
         parser.add_argument('-list', '--list', action='store_true', help='Liste les instances de contract')
+        parser.add_argument('-own', '--own', action='store_true', help='filtre la liste sur les contrats qui vous sont attribués')
         parser.add_argument('-read', '--read', action='store_true', help='Lis une instance de contract')
         parser.add_argument('-create', '--create', action='store_true', help='Crée une instance de contract')
         parser.add_argument('-delete', '--delete', action='store_true', help='Supprime une instance de contract')
@@ -41,7 +42,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """handles 'contracts related commands'"""
         if options['list']:
-            result = self.contract_list()
+            result = self.contract_list(options['own'])
             if result is None:
                 print_command_result("Aucun contrat trouvé dans la base de donnée")
             else:
@@ -214,8 +215,7 @@ class Command(BaseCommand):
             else:
                 print_command_result(f"'{contract_name}' modifié avec succès.")
 
-
-    def contract_list(self):
+    def contract_list(self, own:bool=False):
         """
         handles 'listing contracts
         returns a list of contract or None
@@ -227,7 +227,11 @@ class Command(BaseCommand):
 
         contract_list = []
         for contract_data in response:
-            contract_list.append(contract_data['information'])
+            if contract_data['epicevents_contact_name'] == response_data['request_username'] or own == False:
+                contract_list.append(contract_data['information'])
+
+        if contract_list == []:
+            contract_list = None
 
         return contract_list
 

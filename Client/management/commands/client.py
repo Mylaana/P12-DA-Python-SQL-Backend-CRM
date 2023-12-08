@@ -35,6 +35,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         """parsing arguments passed to client command"""
         parser.add_argument('-list', '--list', action='store_true', help='Liste les instances de client')
+        parser.add_argument('-own', '--own', action='store_true', help='filtre la liste sur les clients qui vous sont attribués')
         parser.add_argument('-read', '--read', action='store_true', help='Lis une instance de client')
         parser.add_argument('-create', '--create', action='store_true', help='Crée une instance de client')
         parser.add_argument('-delete', '--delete', action='store_true', help='Supprime une instance de client')
@@ -43,7 +44,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """handles 'clients related commands'"""
         if options['list']:
-            result = self.client_list()
+            result = self.client_list(options['own'])
             if result is None:
                 print_command_result("Aucun client trouvé dans la base de donnée")
             else:
@@ -197,7 +198,7 @@ class Command(BaseCommand):
             else:
                 print_command_result(f"'{client_name}' modifié avec succès.")
 
-    def client_list(self):
+    def client_list(self, own:bool=False):
         """
         handles 'listing clients
         returns a list of client or None
@@ -210,31 +211,13 @@ class Command(BaseCommand):
         client_list = []
 
         for client_data in response:
-            client_list.append(client_data['name'])
+            if client_data['ee_contact_name'] == response_data['request_username'] or own == False:
+                client_list.append(client_data['name'])
+
+        if client_list == []:
+            client_list = None
 
         return client_list
-
-    def client_read(self, client_id):
-        """
-        handles reading one client
-        returns dict if found or none if not found
-        """
-        response = request_commands(view_url='client', operation="read", object_id=client_id)
-        client_info = []
-        ee_contact_id = int(response['ee_contact'])
-        ee_contact_name = get_ee_contact_name(ee_contact_id)
-
-        client_info = {
-            'ee_contact_id': ee_contact_id,
-            'ee_contact_name': ee_contact_name,
-            'name': response['name'],
-            'siren': response['siren'],
-            'client_contact_name': response['client_contact_name'],
-            'email': response['email'],
-            'phone': response['phone'],
-            'information': response['information'],
-        }
-        return client_info
 
     def client_create(self, client_data):
         """handles creating a new client"""

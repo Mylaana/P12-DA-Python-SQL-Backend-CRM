@@ -6,6 +6,7 @@ import json
 from datetime import datetime
 from EpicEvents.authentication import read_token
 from EpicEvents.settings import BASE_URL
+import re
 
 
 ERROR_MESSAGE = {
@@ -22,9 +23,26 @@ def input_validated(user_input, empty=False):
     gets user input as string
     returns boolean
     """
+    user_input = str(user_input)
     if (user_input == "" or None) and empty is False:
         print("Ce champ ne peut pas être vide")
         return False
+
+    # testing if the input is date format
+    test_date = None
+    try:
+        test_date = datetime.strptime(user_input, '%Y-%m-%d %H:%M:%S')
+    except ValueError:
+        pass
+
+    if test_date is not None:
+        return True
+
+    # testing if there are no illegal caracters
+    if user_input != re.sub(r"[^a-zA-Z0-9\s_$£@€.-]", "", user_input):
+        print("Veuillez n'utiliser que des lettres, des nombres, des Espaces ou un des caractères suivants:  '_$£@€.'")
+        return False
+
     return True
 
 
@@ -85,6 +103,7 @@ def request_commands(view_url, operation, request_data:dict=None, object_id:int=
     response_data = {}
     response_data['operation'] = operation
     response_data['response_status'] = response.status_code
+    response_data['request_username'] = access_token['username']
     if response.status_code // 100 != 2:
         response_data['response_text'] = response.text
 
@@ -108,6 +127,10 @@ def get_object_from_field_name(view_url, filter_field_name:str, filter_field_val
     gets a veiw and a field_name
     returns object if found
     """
+    # validating user input is legal before requests
+    if not input_validated(filter_field_value):
+        return None
+
     if filter_field_name == 'id':
         return get_object_field_from_id(
             view_url=view_url,
@@ -125,6 +148,9 @@ def get_object_from_any_field(view_url, filter_field_name:str, filter_field_valu
     gets view, a field_name from an object and it's value for filtering
     returns the object found
     """
+    # validating user input is legal before requests
+    if not input_validated(filter_field_value):
+        return None
     request_filter = str(f'?{filter_field_name}={filter_field_value}')
     result = request_commands(
         view_url=view_url,
@@ -146,6 +172,10 @@ def get_object_field_from_id(view_url, object_id:int):
     gets view's url as string, object_id as integet
     returns the object found as dict
     """
+    # validating user input is legal before requests
+    if not input_validated(object_id):
+        return None
+
     result = request_commands(
         view_url=view_url,
         operation='read',

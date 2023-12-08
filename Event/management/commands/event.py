@@ -37,6 +37,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         """parsing arguments passed to event command"""
         parser.add_argument('-list', '--list', action='store_true', help='Liste les instances de event')
+        parser.add_argument('-own', '--own', action='store_true', help='filtre la liste sur les événements qui vous sont attribués')
         parser.add_argument('-read', '--read', action='store_true', help='Lis une instance de event')
         parser.add_argument('-create', '--create', action='store_true', help='Crée une instance de event')
         parser.add_argument('-delete', '--delete', action='store_true', help='Supprime une instance de event')
@@ -45,7 +46,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """handles 'events related commands'"""
         if options['list']:
-            result = self.event_list()
+            result = self.event_list(options['own'])
             if result is None:
                 print_command_result("Aucun événement trouvé dans la base de donnée")
             else:
@@ -228,7 +229,7 @@ class Command(BaseCommand):
             else:
                 print_command_result(f"'{event_name}' modifié avec succès.")
 
-    def event_list(self):
+    def event_list(self, own:bool=False):
         """
         handles 'listing events
         returns a list of event or None
@@ -240,7 +241,11 @@ class Command(BaseCommand):
 
         event_list = []
         for event_data in response:
-            event_list.append(event_data['name'])
+            if event_data['ee_contact_name'] == response_data['request_username'] or own == False:
+                event_list.append(event_data['name'])
+
+        if event_list == []:
+            event_list = None
 
         return event_list
 
