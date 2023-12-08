@@ -4,3 +4,4 @@ UML.mdj
 db_config.*
 credentials.json
 *coverage
+/tests
