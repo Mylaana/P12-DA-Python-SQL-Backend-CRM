@@ -38,6 +38,7 @@ class Command(BaseCommand):
         """parsing arguments passed to event command"""
         parser.add_argument('-list', '--list', action='store_true', help='Liste les instances de event')
         parser.add_argument('-own', '--own', action='store_true', help='filtre la liste sur les événements qui vous sont attribués')
+        parser.add_argument('-no-owner', '--no-owner', action='store_true', help='filtre la liste sur les événements qui ne sont pas attribués')
         parser.add_argument('-read', '--read', action='store_true', help='Lis une instance de event')
         parser.add_argument('-create', '--create', action='store_true', help='Crée une instance de event')
         parser.add_argument('-delete', '--delete', action='store_true', help='Supprime une instance de event')
@@ -46,7 +47,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """handles 'events related commands'"""
         if options['list']:
-            result = self.event_list(options['own'])
+            result = self.event_list(own=options['own'], no_owner=options['no_owner'])
             if result is None:
                 print_command_result("Aucun événement trouvé dans la base de donnée")
             else:
@@ -229,7 +230,7 @@ class Command(BaseCommand):
             else:
                 print_command_result(f"'{event_name}' modifié avec succès.")
 
-    def event_list(self, own:bool=False):
+    def event_list(self, own:bool=False, no_owner:bool=False):
         """
         handles 'listing events
         returns a list of event or None
@@ -241,8 +242,15 @@ class Command(BaseCommand):
 
         event_list = []
         for event_data in response:
-            if event_data['ee_contact_name'] == response_data['request_username'] or own == False:
-                event_list.append(event_data['name'])
+            # if own option and event is not own, skips adding to list
+            if event_data['ee_contact_name'] != response_data['request_username'] and own:
+                continue
+
+            # if no-owner option and event has owner, skips adding to list
+            if event_data['ee_contact_name'] is not None and no_owner:
+                continue
+
+            event_list.append(event_data['name'])
 
         if event_list == []:
             event_list = None
