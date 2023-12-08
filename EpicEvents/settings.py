@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import configparser
 import os
+import sentry_sdk
 
 db_config_path = os.path.join(os.path.dirname(__file__), 'db_config.ini')
 
@@ -148,3 +149,16 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'UserProfile.UserProfile'
+
+
+# adding sentry for error monitoring on DB
+sentry_sdk.init(
+    dsn="https://0141190ed26297d66403e021b5aa0bfb@o4506359966859264.ingest.sentry.io/4506359969087488",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
