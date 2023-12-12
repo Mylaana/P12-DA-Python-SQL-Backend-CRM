@@ -45,7 +45,7 @@ Assurez-vous d'avoir installé les outils suivants sur votre machine :
 
 1. Créez une base de données MySQL vide pour l'application CRM.
 
-2. Copiez le fichier `db_config_example.ini` et renommez-le en `db_config.ini`. Modifiez les paramètres de base de données dans ce fichier en fonction des paramètres de votre base de donnée MySql :
+2. Dans le répertoire nommé 'EpicEvents', copiez le fichier `db_config_example.ini` et renommez-le en `db_config.ini`. Modifiez les paramètres de base de données dans ce fichier en fonction des paramètres de votre base de donnée MySql :
 
     ```dotenv
     # db_config_example.ini
