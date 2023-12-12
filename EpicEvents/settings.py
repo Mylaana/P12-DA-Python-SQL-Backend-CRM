@@ -153,7 +153,7 @@ AUTH_USER_MODEL = 'UserProfile.UserProfile'
 
 # adding sentry for error monitoring on DB
 sentry_sdk.init(
-    dsn="https://0141190ed26297d66403e021b5aa0bfb@o4506359966859264.ingest.sentry.io/4506359969087488",
+    dsn=config.get('sentry', 'sentry_link'),
     # Set traces_sample_rate to 1.0 to capture 100%
     # of transactions for performance monitoring.
     traces_sample_rate=1.0,
