@@ -63,7 +63,7 @@ Assurez-vous d'avoir installé les outils suivants sur votre machine :
     Ces étapes garantissent que l'application CRM utilise la base de données MySQL.
 
 ### Initialisation de Sentry
-1. Créez un nouveau projet Sentry et sélectionnez Django (sur www.sentry.io)
+1. Créez un nouveau projet Sentry et sélectionnez Django: www.sentry.io
 2. Dans la section 'Configure SDK' vous devriez voir une sous section comme suit :
     ```dotenv
     # settings.py
@@ -91,20 +91,24 @@ copiez le lien http de la ligne 'dsn="https://..."'
     ```
 
 ### Utilisation du CRM
-1. Lancez l'application CRM avec la commande suivante :
+1. Créez un compte administrateur:
+    ```bash
+    python manage.py createsuperuser
+    ```
+2. Lancez l'application CRM avec la commande suivante :
 
     ```bash
     python manage.py runserver
     ```
 L'outil CRM sera accessible à l'adresse http://localhost:8000.
 
-2. Liste des commandes de l'application :
-    Toutes les commandes doivent être précédées de 'python manage.py ':
+3. Liste des commandes de l'application :
+    Toutes les commandes doivent être précédées de 'python manage.py ':  
     Authentification :
-       ```bash
-       login # permets de s'authentifier dans la base de données.
-       logout # permet de se déconnecter.
-       ```
+   ```bash
+   login # permets de s'authentifier dans la base de données.
+   logout # permet de se déconnecter.
+   ```
     
     Vous pouvez appeler les menus suivants :
     ```bash
