@@ -85,7 +85,7 @@ copiez le lien http de la ligne 'dsn="https://..."'
 
 3. Dans le répertoire EpicEvents du projet, retournez dans le fichier `db_config.ini`, et collez ce lien dans la section : 
     ```dotenv
-    # db_config_example.ini
+    # db_config.ini
     [sentry]
     sentry_link = https://sentry_link_here.com.123456789
     ```
