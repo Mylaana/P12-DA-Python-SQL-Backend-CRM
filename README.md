@@ -62,6 +62,34 @@ Assurez-vous d'avoir installé les outils suivants sur votre machine :
 
     Ces étapes garantissent que l'application CRM utilise la base de données MySQL.
 
+### Initialisation de Sentry
+1. Créez un nouveau projet Sentry et sélectionnez Django (sur www.sentry.io)
+2. Dans la section 'Configure SDK' vous devriez voir une sous section comme suit :
+    ```dotenv
+    # settings.py
+    import sentry_sdk
+    
+    sentry_sdk.init(
+        dsn="https://code_a_copier.ingest.sentry.io/code_a_copier",
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        traces_sample_rate=1.0,
+        # Set profiles_sample_rate to 1.0 to profile 100%
+        # of sampled transactions.
+        # We recommend adjusting this value in production.
+        profiles_sample_rate=1.0,
+    )
+    ```
+
+copiez le lien http de la ligne 'dsn="https://..."'
+
+3. Dans le répertoire EpicEvents du projet, retournez dans le fichier `db_config.ini`, et collez ce lien dans la section : 
+    ```dotenv
+    # db_config_example.ini
+    [sentry]
+    sentry_link = https://sentry_link_here.com.123456789
+    ```
+
 ### Utilisation du CRM
 1. Lancez l'application CRM avec la commande suivante :
 
