@@ -11,7 +11,7 @@ import json
 
 TEST_USER = {'username': 'test_user',
              'password': 'test_password123$A',
-             'team': '1',
+             'team': '',
              'email': 'test_user@ee.com',
              'first_name': 'test user prenom',
              'last_name': 'test user nom',
@@ -20,6 +20,8 @@ TEST_USER = {'username': 'test_user',
 @pytest.mark.django_db
 def test_user_create_should_create():
     command = user.Command()
+    TEST_USER['team'] = str(get_object_from_any_field('team','name', 'setup_team')['id'])
+
     returned_value = command.user_create(TEST_USER)
     print(returned_value)
     assert returned_value[0]['username'] == TEST_USER['username']
