@@ -16,6 +16,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
             }
 
     def get_team_name(self, obj):
+        if obj.team is None:
+            return
         return obj.team.name
 
     def create(self, validated_data):
