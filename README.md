@@ -45,7 +45,7 @@ Assurez-vous d'avoir installé les outils suivants sur votre machine :
 
 1. Créez une base de données MySQL vide pour l'application CRM.
 
-2. Copiez le fichier `db_config_example.ini` et renommez-le en `db_config.ini`. Modifiez les paramètres de base de données dans ce fichier en fonction des paramètres de votre base de donnée MySql :
+2. Dans le répertoire nommé 'EpicEvents', copiez le fichier `db_config_example.ini` et renommez-le en `db_config.ini`. Modifiez les paramètres de base de données dans ce fichier en fonction des paramètres de votre base de donnée MySql :
 
     ```dotenv
     # db_config_example.ini
@@ -62,21 +62,53 @@ Assurez-vous d'avoir installé les outils suivants sur votre machine :
 
     Ces étapes garantissent que l'application CRM utilise la base de données MySQL.
 
+### Initialisation de Sentry
+1. Créez un nouveau projet Sentry et sélectionnez Django: www.sentry.io
+2. Dans la section 'Configure SDK' vous devriez voir une sous section comme suit :
+    ```dotenv
+    # settings.py
+    import sentry_sdk
+    
+    sentry_sdk.init(
+        dsn="https://code_a_copier.ingest.sentry.io/code_a_copier",
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        traces_sample_rate=1.0,
+        # Set profiles_sample_rate to 1.0 to profile 100%
+        # of sampled transactions.
+        # We recommend adjusting this value in production.
+        profiles_sample_rate=1.0,
+    )
+    ```
+
+copiez le lien http de la ligne 'dsn="https://..."'
+
+3. Dans le répertoire EpicEvents du projet, retournez dans le fichier `db_config.ini`, et collez ce lien dans la section : 
+    ```dotenv
+    # db_config.ini
+    [sentry]
+    sentry_link = https://sentry_link_here.com.123456789
+    ```
+
 ### Utilisation du CRM
-1. Lancez l'application CRM avec la commande suivante :
+1. Créez un compte administrateur:
+    ```bash
+    python manage.py createsuperuser
+    ```
+2. Lancez l'application CRM avec la commande suivante :
 
     ```bash
     python manage.py runserver
     ```
 L'outil CRM sera accessible à l'adresse http://localhost:8000.
 
-2. Liste des commandes de l'application :
-    Toutes les commandes doivent être précédées de 'python manage.py ':
+3. Liste des commandes de l'application :
+    Toutes les commandes doivent être précédées de 'python manage.py ':  
     Authentification :
-       ```bash
-       login # permets de s'authentifier dans la base de données.
-       logout # permet de se déconnecter.
-       ```
+   ```bash
+   login # permets de s'authentifier dans la base de données.
+   logout # permet de se déconnecter.
+   ```
     
     Vous pouvez appeler les menus suivants :
     ```bash

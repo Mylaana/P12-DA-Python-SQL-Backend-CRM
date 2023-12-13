@@ -15,7 +15,7 @@ class Contract(models.Model):
 
 
     def __str__(self) -> str:
-        """returns contact info"""
+        """returns contract info"""
         return (
             f"client name: {self.client.name}, information: {self.information} active: {self.status_is_active}"
         )

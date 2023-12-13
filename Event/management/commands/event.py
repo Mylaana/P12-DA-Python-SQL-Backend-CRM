@@ -233,6 +233,7 @@ class Command(BaseCommand):
     def event_list(self, own:bool=False, no_owner:bool=False):
         """
         handles 'listing events
+        gets two optionnal boolean to add cutomized filtering
         returns a list of event or None
         '"""
         response = request_commands(view_url='event', operation="read")

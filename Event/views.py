@@ -9,15 +9,15 @@ from EpicEvents import permissions
 
 
 class EventViewSet(viewsets.ModelViewSet):
-    """Handle CRUD operations on UserProfile model"""
+    """Handle CRUD operations on Event model"""
     serializer_class = EventSerializer
     permission_classes = [IsAuthenticated, permissions.EventPermisison]
     queryset = Event.objects.all()
 
     def get_queryset(self):
         """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
+        Optionally restricts the returned queryset,
+        by filtering against a `name` query parameter in the URL.
         """
         queryset = Event.objects.all()
         name = self.request.query_params.get('name')

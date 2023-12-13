@@ -24,6 +24,7 @@ class CustomObtainAuthToken(ObtainAuthToken):
 
 
 class LogoutView(APIView):
+    """handles logging out users"""
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -36,8 +37,11 @@ AUTH_URL = "http://localhost:8000/token-auth/"
 TOKEN_FILENAME = "credentials.json"
 
 def request_get_token():
-    """asks user for credentials and returns token as string
-    returns none if could not authenticate"""
+    """
+    gets nothing
+    asks user for credentials and returns token as string
+    returns dict containing credentials and token value (None if not authenticated)
+    """
     username = input("enter username:")
     password = getpass("enter password:")
 

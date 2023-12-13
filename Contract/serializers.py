@@ -24,6 +24,8 @@ class ContractSerializer(serializers.ModelSerializer):
             )
 
     def get_epicevents_contact_name(self, obj):
+        if obj.ee_contact is None:
+            return
         return obj.ee_contact.username
     
     def get_client_name(self, obj):

@@ -201,6 +201,7 @@ class Command(BaseCommand):
     def client_list(self, own:bool=False):
         """
         handles 'listing clients
+        gets an optionnal boolean to add filtering
         returns a list of client or None
         '"""
         response = request_commands(view_url='client', operation="read")
