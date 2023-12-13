@@ -100,17 +100,26 @@ copiez le lien http de la ligne 'dsn="https://..."'
     ```bash
     python manage.py runserver
     ```
-L'outil CRM sera accessible à l'adresse http://localhost:8000.
+    L'outil CRM sera accessible à l'adresse http://localhost:8000.
+
+3. Créez les équipes:  
+   L'application étant concue pour fonctionner avec 3 équipes de base, veuillez vous authentifier en tant que superuser puis utiliser la commande suivante :
+   ```bash
+    python manage.py team -create
+    ```
+    Créez ainsi trois équipes : 'commerciale', 'support', 'gestion'.
+    Notez qu'il est possible d'utiliser d'autres noms d'équipe à condition de modifier les permissions d'accès dans le fichier EpicEvents/'permissions.py'.
+
 
 3. Liste des commandes de l'application :
     Toutes les commandes doivent être précédées de 'python manage.py ':  
     Authentification :
    ```bash
-   login # permets de s'authentifier dans la base de données.
+   login # permet de s'authentifier dans la base de données.
    logout # permet de se déconnecter.
    ```
     
-    Vous pouvez appeler les menus suivants :
+    Une fois authentifié, vous pouvez appeler les menus suivants :
     ```bash
     user # permettra d'intéragir avec les données liées aux utilisateurs.
     team # permettra d'intéragir avec les données liées aux équipes.
