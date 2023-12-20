@@ -116,7 +116,7 @@ class Command(BaseCommand):
                 print_command_result(f"Evénement '{client_data['name']}' créé avec succès")
 
         elif options['delete']:
-            client_name = input("Information de l'événement à supprimer: ")
+            client_name = input("Nom du client à supprimer: ")
             client = get_object_from_field_name(
                 filter_field_name='name',
                 filter_field_value=client_name,

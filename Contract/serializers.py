@@ -29,4 +29,6 @@ class ContractSerializer(serializers.ModelSerializer):
         return obj.ee_contact.username
     
     def get_client_name(self, obj):
+        if obj.client is None:
+            return
         return obj.client.name
