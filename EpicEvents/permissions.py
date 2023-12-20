@@ -25,6 +25,9 @@ class TeamPermisison(permissions.BasePermission):
         if request.user.is_admin:
             return True
 
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
         return False
 
 class ClientPermisison(permissions.BasePermission):
